@@ -10,13 +10,6 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="ubei@192.168.137.45:22 key (2)">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/home/ubei/Documents/Projects/codeScan" local="$PROJECT_DIR$" />
-          </mappings>
-        </serverdata>
-      </paths>
     </serverData>
     <option name="myAutoUpload" value="ALWAYS" />
   </component>
