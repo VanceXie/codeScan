@@ -3,7 +3,6 @@ import sys
 
 import jpype
 from jpype import *
-from jpype._core import shutdownJVM
 
 
 class ZXQRcode(object):
@@ -12,7 +11,8 @@ class ZXQRcode(object):
         self.jar_path = r"D:\Project\zxing\out\artifacts\core_jar\core.jar"
         # 启动JVM
         try:
-            startJVM(r"D:\Program Files\Java\jdk-17.0.4.1\bin\server\jvm.dll", "-ea", "-Djava.class.path=%s;%s" % (self.jar_path))
+            startJVM(r"D:\Program Files\Java\jdk-17.0.4.1\bin\server\jvm.dll", "-ea",
+                     "-Djava.class.path=%s;%s" % (self.jar_path))
         except:
             pass
         # 加载需要加载的类
@@ -55,7 +55,6 @@ class ZXQRcode(object):
             return result.getText(), matrix1, coordinateList
         except Exception as e:
             return False
-
 
 
 image_path = r"D:\Test_Label1\2.tif"
