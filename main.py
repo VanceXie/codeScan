@@ -1,5 +1,5 @@
 import sys
-import calendar
+from Display import calendar
 from PyQt5 import QtWidgets
 class RunTest(calendar.Ui_Dialog):
     def __init__(self, myinherit):
