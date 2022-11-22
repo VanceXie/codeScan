@@ -11,8 +11,8 @@ class ZXQRcode(object):
         self.jar_path = r"D:\Project\zxing\out\artifacts\core_jar\core.jar"
         # 启动JVM
         try:
-            startJVM(r"D:\Program Files\Java\jdk-17.0.4.1\bin\server\jvm.dll", "-ea",
-                     "-Djava.class.path=%s;%s" % (self.jar_path))
+            jpype.startJVM(r"D:\Program Files\Java\jdk-17.0.4.1\bin\server\jvm.dll", "-ea",
+                           "-Djava.class.path=%s;%s" % (self.jar_path))
         except:
             pass
         # 加载需要加载的类
@@ -31,7 +31,7 @@ class ZXQRcode(object):
     # 释放JVM
     def dels(self):
         try:
-            shutdownJVM()
+            jpype.shutdownJVM()
         except Exception as e:
             pass
     
