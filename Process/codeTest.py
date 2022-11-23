@@ -10,7 +10,7 @@ result_name = filenameList[0] + '_detected' + '.' + filenameList[1]
 
 # 加载图片
 src_image = cv.imread(filename)
-# '''wechat'''
+# '''WeChat'''
 # cv.wechat_qrcode_WeChatQRCode()
 '''opencv读码'''
 # 实例化
