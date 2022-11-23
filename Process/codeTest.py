@@ -4,14 +4,14 @@ import cv2 as cv
 import numpy as np
 from pyzxing import BarCodeReader
 
-filename = r'D:\Test_Label1\test4.png'
+filename = r'D:\Test_Label1\Defect_017.png'
 filenameList = filename.split('.')
 result_name = filenameList[0] + '_detected' + '.' + filenameList[1]
 
 # 加载图片
 src_image = cv.imread(filename)
-'''wechat'''
-cv.wechat_qrcode_WeChatQRCode()
+# '''wechat'''
+# cv.wechat_qrcode_WeChatQRCode()
 '''opencv读码'''
 # 实例化
 barcodeDetector = cv.barcode_BarcodeDetector()

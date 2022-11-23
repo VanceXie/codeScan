@@ -8,11 +8,12 @@ from jpype import *
 class ZXQRcode(object):
     def __init__(self):
         # jar包的路径
-        self.jar_path = r"D:\Project\zxing\out\artifacts\core_jar\core.jar"
+        self.jar_path1 = r"D:\Project\zxing\out\artifacts\core_jar\core.jar"
+        self.jar_path2 = r"D:\Project\zxing\out\artifacts\javase_jar\javase.jar"
         # 启动JVM
         try:
-            jpype.startJVM(r"D:\Program Files\Java\jdk-17.0.4.1\bin\server\jvm.dll", "-ea",
-                           "-Djava.class.path=%s;%s" % (self.jar_path))
+            jvm_path = jpype.getDefaultJVMPath()
+            jpype.startJVM(jvmpath=jvm_path, classpath=[self.jar_path1, self.jar_path2])
         except:
             pass
         # 加载需要加载的类
@@ -49,15 +50,25 @@ class ZXQRcode(object):
             hints.put(self.DecodeHintType.CHARACTER_SET, "UTF-8")
             detectorResult = self.Detector(matrix).detect(hints)
             resultPoints = self.MultiFormatReader().decodeWithState(binaryBitmap).getResultPoints()
-            coordinateList = [str(resultPoints[0]), str(resultPoints[1]), str(resultPoints[2])]
+            # coordinateList = [str(resultPoints[0]), str(resultPoints[1]), str(resultPoints[2]), str(resultPoints[3])]
+            coordinateList = []
+            for i in resultPoints:
+                coordinateList.append(str(i))
             matrix1 = detectorResult.getBits()
             result = self.MultiFormatReader().decode(binaryBitmap, hints)
             return result.getText(), matrix1, coordinateList
         except Exception as e:
+            print(e)
             return False
 
 
-image_path = r"D:\Test_Label1\2.tif"
+image_path = r"D:\Test_Label1\Defect_017.png"
 zx = ZXQRcode()
-print(zx.analysis_QR(image_path))
+if zx.analysis_QR(image_path):
+    code_result, matrix_map, corner_points = zx.analysis_QR(image_path)
+    print(code_result)
+    print(str(matrix_map))
+    print(corner_points)
+else:
+    print('未检出！\n' * 3)
 zx.dels()
