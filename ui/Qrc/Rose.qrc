@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Rose/add.svg</file>
+        <file>Rose/barcode.svg</file>
+        <file>Rose/camera.svg</file>
+        <file>Rose/delete.svg</file>
+        <file>Rose/filemanage.svg</file>
+        <file>Rose/folder.svg</file>
+        <file>Rose/fullscreen.svg</file>
+        <file>Rose/fullscreen-exit.svg</file>
+        <file>Rose/help.svg</file>
+        <file>Rose/qrcode.svg</file>
+        <file>Rose/save.svg</file>
+        <file>Rose/search.svg</file>
+        <file>Rose/shutdown1.svg</file>
+        <file>Rose/shutdown2.svg</file>
+        <file>Rose/start.svg</file>
+        <file>Rose/stop.svg</file>
+        <file>Rose/usermanage.svg</file>
+        <file>Rose/warn.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Blue/add.svg</file>
+        <file>Blue/barcode.svg</file>
+        <file>Blue/camera.svg</file>
+        <file>Blue/delete.svg</file>
+        <file>Blue/filemanage.svg</file>
+        <file>Blue/folder.svg</file>
+        <file>Blue/fullscreen.svg</file>
+        <file>Blue/fullscreen-exit.svg</file>
+        <file>Blue/help.svg</file>
+        <file>Blue/qrcode.svg</file>
+        <file>Blue/save.svg</file>
+        <file>Blue/search.svg</file>
+        <file>Blue/shutdown1.svg</file>
+        <file>Blue/shutdown2.svg</file>
+        <file>Blue/start.svg</file>
+        <file>Blue/stop.svg</file>
+        <file>Blue/usermanage.svg</file>
+        <file>Blue/warn.svg</file>
+    </qresource>
+</RCC>

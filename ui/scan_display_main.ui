@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>480</height>
+    <width>1280</width>
+    <height>960</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Scan</string>
@@ -20,48 +26,179 @@
    </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QSplitter" name="image_splitter">
+   <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>780</width>
-      <height>220</height>
+      <x>0</x>
+      <y>0</y>
+      <width>1280</width>
+      <height>909</height>
      </rect>
     </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
-    <property name="handleWidth">
-     <number>10</number>
+    <property name="font">
+     <font>
+      <family>Adobe Heiti Std</family>
+      <pointsize>12</pointsize>
+     </font>
     </property>
-    <widget class="QWidget" name="">
-     <layout class="QVBoxLayout" name="imageInput">
-      <item>
-       <widget class="QLabel" name="imageInput_label">
-        <property name="text">
-         <string>输入图像</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGraphicsView" name="imageInput_img"/>
-      </item>
-     </layout>
+    <property name="tabPosition">
+     <enum>QTabWidget::West</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+    <property name="documentMode">
+     <bool>false</bool>
+    </property>
+    <property name="tabsClosable">
+     <bool>false</bool>
+    </property>
+    <property name="movable">
+     <bool>true</bool>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="imageShow_table">
+     <property name="font">
+      <font>
+       <family>Adobe Heiti Std</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <attribute name="icon">
+      <iconset resource="Qrc/Rose.qrc">
+       <normaloff>:/Rose/camera.svg</normaloff>:/Rose/camera.svg</iconset>
+     </attribute>
+     <attribute name="title">
+      <string>结果显示</string>
+     </attribute>
+     <widget class="QLabel" name="imageInput_label">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>178</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>输入图像</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="imageCapture">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>251</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="mouseTracking">
+       <bool>false</bool>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;(Ctrl+P)&lt;/span&gt;开始采集图像&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="statusTip">
+       <string>图像采集中</string>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>图像开始采集标志位</string>
+      </property>
+      <property name="icon">
+       <iconset resource="Qrc/Rose.qrc">
+        <normaloff>:/Rose/start.svg</normaloff>:/Rose/start.svg</iconset>
+      </property>
+      <property name="shortcut">
+       <string>Ctrl+P</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="imageOutput_img">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>202</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="imageOutput_label">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>180</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>输出图像</string>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="imageInput_img">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>200</y>
+        <width>256</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
-    <widget class="QWidget" name="">
-     <layout class="QVBoxLayout" name="imageOutput">
-      <item>
-       <widget class="QLabel" name="imageOutput_label">
-        <property name="text">
-         <string>输出图像</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGraphicsView" name="imageOutput_img"/>
-      </item>
-     </layout>
+    <widget class="QWidget" name="parameter_table">
+     <property name="font">
+      <font>
+       <family>Adobe Heiti Std</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <attribute name="icon">
+      <iconset resource="Qrc/Rose.qrc">
+       <normaloff>:/Rose/save.svg</normaloff>:/Rose/save.svg</iconset>
+     </attribute>
+     <attribute name="title">
+      <string>参数设置</string>
+     </attribute>
     </widget>
    </widget>
   </widget>
@@ -70,21 +207,21 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1280</width>
      <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="file">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>263</x>
       <y>153</y>
       <width>137</width>
       <height>126</height>
      </rect>
     </property>
     <property name="title">
-     <string>文件</string>
+     <string>文件&amp;F</string>
     </property>
     <addaction name="open"/>
     <addaction name="save"/>
@@ -92,54 +229,108 @@
    </widget>
    <widget class="QMenu" name="log">
     <property name="title">
-     <string>日志</string>
+     <string>日志&amp;L</string>
     </property>
     <addaction name="showLog"/>
+    <addaction name="logLocation"/>
    </widget>
    <widget class="QMenu" name="help">
     <property name="title">
-     <string>帮助</string>
+     <string>帮助&amp;H</string>
     </property>
     <addaction name="tutorials"/>
     <addaction name="separator"/>
     <addaction name="about"/>
    </widget>
+   <widget class="QMenu" name="view">
+    <property name="title">
+     <string>视图&amp;V</string>
+    </property>
+    <addaction name="function"/>
+   </widget>
+   <widget class="QMenu" name="setting">
+    <property name="title">
+     <string>设置&amp;S</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="window">
+    <property name="title">
+     <string>窗口&amp;W</string>
+    </property>
+    <addaction name="minimize"/>
+   </widget>
    <addaction name="file"/>
+   <addaction name="view"/>
+   <addaction name="setting"/>
+   <addaction name="window"/>
    <addaction name="log"/>
    <addaction name="help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="tutorials">
    <property name="text">
-    <string>教程</string>
+    <string>教程&amp;T</string>
    </property>
   </action>
   <action name="about">
    <property name="text">
-    <string>关于</string>
+    <string>关于&amp;A</string>
    </property>
   </action>
   <action name="showLog">
    <property name="text">
-    <string>查看日志</string>
+    <string>查看当前日志</string>
    </property>
   </action>
   <action name="open">
    <property name="text">
-    <string>打开</string>
+    <string>打开&amp;O</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="save">
    <property name="text">
-    <string>保存</string>
+    <string>保存&amp;S</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="saveAs">
    <property name="text">
-    <string>另存为</string>
+    <string>另存为&amp;S&amp;A</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S, Ctrl+A</string>
+   </property>
+  </action>
+  <action name="logLocation">
+   <property name="text">
+    <string>打开日志所在位置</string>
+   </property>
+  </action>
+  <action name="minimize">
+   <property name="text">
+    <string>最小化</string>
+   </property>
+  </action>
+  <action name="function">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>功能</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="Qrc/Rose.qrc"/>
+  <include location="qrc/Blue.qrc"/>
+ </resources>
  <connections/>
 </ui>
