@@ -110,93 +110,196 @@
        <attribute name="title">
         <string>结果显示</string>
        </attribute>
-       <widget class="QWidget" name="">
+       <widget class="QGroupBox" name="functionBox">
         <property name="geometry">
          <rect>
-          <x>11</x>
-          <y>11</y>
-          <width>677</width>
-          <height>235</height>
+          <x>900</x>
+          <y>30</y>
+          <width>331</width>
+          <height>691</height>
          </rect>
+        </property>
+        <property name="title">
+         <string>功能选项</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QPushButton" name="imageCapture">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="mouseTracking">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;开始采集图像 Ctrl+P&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="statusTip">
-            <string>图像采集中</string>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="autoFillBackground">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>图像开始采集标志位</string>
-           </property>
-           <property name="icon">
-            <iconset resource="Qrc/Rose.qrc">
-             <normaloff>:/Rose/start.svg</normaloff>:/Rose/start.svg</iconset>
-           </property>
-           <property name="shortcut">
-            <string>Ctrl+P</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-           <property name="flat">
-            <bool>false</bool>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>扫码功能</string>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QLabel" name="imageInput_label">
-               <property name="text">
-                <string>输入图像</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGraphicsView" name="imageInput_img"/>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="imageOutput_label">
-               <property name="text">
-                <string>输出图像</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGraphicsView" name="imageOutput_img"/>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>缺陷检测</string>
+           </property>
+          </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QTreeWidget" name="treeWidget">
+        <property name="geometry">
+         <rect>
+          <x>430</x>
+          <y>450</y>
+          <width>341</width>
+          <height>291</height>
+         </rect>
+        </property>
+        <column>
+         <property name="text">
+          <string>扫码功能</string>
+         </property>
+         <property name="font">
+          <font>
+           <family>Adobe 宋体 Std L</family>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+        </column>
+        <item>
+         <property name="text">
+          <string>一维码</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>UPC</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>EAN</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Code39</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Code128</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>二维码</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Matrix Data</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>QR</string>
+          </property>
+         </item>
+        </item>
+       </widget>
+       <widget class="QPushButton" name="imageCapture">
+        <property name="geometry">
+         <rect>
+          <x>13</x>
+          <y>13</y>
+          <width>186</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;开始采集图像 Ctrl+P&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="statusTip">
+         <string>图像采集中</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>图像开始采集标志位</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Qrc/Rose.qrc">
+          <normaloff>:/Rose/start.svg</normaloff>:/Rose/start.svg</iconset>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+P</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="imageOutput_label">
+        <property name="geometry">
+         <rect>
+          <x>14</x>
+          <y>50</y>
+          <width>68</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>输出图像</string>
+        </property>
+       </widget>
+       <widget class="QGraphicsView" name="imageOutput_img">
+        <property name="geometry">
+         <rect>
+          <x>89</x>
+          <y>50</y>
+          <width>256</width>
+          <height>192</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="imageInput_label">
+        <property name="geometry">
+         <rect>
+          <x>14</x>
+          <y>475</y>
+          <width>68</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>输入图像</string>
+        </property>
+       </widget>
+       <widget class="QGraphicsView" name="imageInput_img">
+        <property name="geometry">
+         <rect>
+          <x>89</x>
+          <y>475</y>
+          <width>256</width>
+          <height>192</height>
+         </rect>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="parameter_table">
@@ -234,8 +337,8 @@
      <rect>
       <x>263</x>
       <y>153</y>
-      <width>137</width>
-      <height>126</height>
+      <width>147</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">

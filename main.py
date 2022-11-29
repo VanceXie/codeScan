@@ -14,7 +14,7 @@ from PyQt5 import uic
 
 
 # 动态载入
-class mainwindow(QMainWindow):
+class mainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # PyQt5
@@ -26,5 +26,5 @@ class mainwindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = mainwindow()
+    window = mainWindow()
     sys.exit(app.exec_())
