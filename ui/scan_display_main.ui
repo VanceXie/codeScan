@@ -82,7 +82,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="iconSize">
        <size>
@@ -135,7 +135,7 @@
          <number>10</number>
         </property>
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="3,1,0">
           <property name="spacing">
            <number>10</number>
           </property>
@@ -144,22 +144,6 @@
             <property name="spacing">
              <number>10</number>
             </property>
-            <item>
-             <widget class="QLabel" name="imageInput_label">
-              <property name="font">
-               <font>
-                <family>Adobe 黑体 Std R</family>
-                <pointsize>12</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>检测
-视图</string>
-              </property>
-             </widget>
-            </item>
             <item>
              <widget class="QGraphicsView" name="imageInput_img"/>
             </item>
@@ -171,22 +155,6 @@
              <number>10</number>
             </property>
             <item>
-             <widget class="QLabel" name="imageOutput_label">
-              <property name="font">
-               <font>
-                <family>Adobe 黑体 Std R</family>
-                <pointsize>12</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>检测
-结果</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QTableWidget" name="tableWidget">
               <property name="showGrid">
                <bool>true</bool>
@@ -194,17 +162,44 @@
               <property name="sortingEnabled">
                <bool>true</bool>
               </property>
+              <attribute name="horizontalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
               <attribute name="horizontalHeaderCascadingSectionResizes">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>150</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>150</number>
+              </attribute>
+              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderMinimumSectionSize">
+               <number>30</number>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>40</number>
+              </attribute>
+              <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
                <bool>false</bool>
               </attribute>
               <row>
                <property name="text">
-                <string>条码</string>
+                <string>1</string>
                </property>
               </row>
               <row>
                <property name="text">
-                <string>字符</string>
+                <string>2</string>
                </property>
               </row>
               <column>
@@ -214,7 +209,37 @@
               </column>
               <column>
                <property name="text">
-                <string>检得内容</string>
+                <string>条码缺陷</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>条码结构特性</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>条码光学特性</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>字符缺陷</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>字符结构特性</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>字码一致性</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>标签位置姿态</string>
                </property>
               </column>
              </widget>
@@ -337,7 +362,308 @@
            <number>10</number>
           </property>
           <item>
-           <widget class="QTreeView" name="treeView"/>
+           <widget class="QTreeWidget" name="treeWidget">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::ContiguousSelection</enum>
+            </property>
+            <property name="autoExpandDelay">
+             <number>-1</number>
+            </property>
+            <property name="rootIsDecorated">
+             <bool>true</bool>
+            </property>
+            <property name="uniformRowHeights">
+             <bool>false</bool>
+            </property>
+            <property name="itemsExpandable">
+             <bool>true</bool>
+            </property>
+            <property name="animated">
+             <bool>true</bool>
+            </property>
+            <property name="allColumnsShowFocus">
+             <bool>false</bool>
+            </property>
+            <property name="headerHidden">
+             <bool>false</bool>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="headerCascadingSectionResizes">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="headerDefaultSectionSize">
+             <number>33</number>
+            </attribute>
+            <attribute name="headerHighlightSections">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="headerStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>功能选项</string>
+             </property>
+            </column>
+            <item>
+             <property name="text">
+              <string>扫码功能</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+             <item>
+              <property name="text">
+               <string>一维码</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>商品码</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+               <item>
+                <property name="text">
+                 <string>UPC-A</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>UPC-E</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>EAN-8</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>EAN-13</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>UPC/EAN Extension 2/5</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+              </item>
+              <item>
+               <property name="text">
+                <string>工业码</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Code 39</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Code 93</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Code 128</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Codebar</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>ITF</string>
+                </property>
+                <property name="checkState">
+                 <enum>Checked</enum>
+                </property>
+               </item>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>二维码</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>QR Code</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Data Matrix</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aztec</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>PDF 417</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>MaxiCode</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RSS-14</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>RSS-Expanded</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+             </item>
+            </item>
+            <item>
+             <property name="text">
+              <string>检测功能</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+             <item>
+              <property name="text">
+               <string>条码检测</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>条码缺陷</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>条码结构特性</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>条码光学特性</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>字符检测</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>字符缺陷</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>字符结构特性</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>字码一致性</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>标签位置姿态</string>
+              </property>
+              <property name="checkState">
+               <enum>Checked</enum>
+              </property>
+             </item>
+            </item>
+           </widget>
           </item>
           <item>
            <widget class="QFrame" name="frame_2">
@@ -382,6 +708,12 @@
                </property>
                <property name="text">
                 <string>功能确认</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -515,7 +847,10 @@
                </font>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
+              </property>
+              <property name="tabSpacing">
+               <number>5</number>
               </property>
               <widget class="QWidget" name="codesacn_para">
                <property name="geometry">
@@ -523,7 +858,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>1206</width>
-                 <height>793</height>
+                 <height>797</height>
                 </rect>
                </property>
                <property name="font">
@@ -584,7 +919,7 @@
                      <x>0</x>
                      <y>0</y>
                      <width>1183</width>
-                     <height>770</height>
+                     <height>774</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -606,7 +941,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>1206</width>
-                 <height>793</height>
+                 <height>797</height>
                 </rect>
                </property>
                <property name="font">
@@ -667,7 +1002,7 @@
                      <x>0</x>
                      <y>0</y>
                      <width>1183</width>
-                     <height>770</height>
+                     <height>774</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -717,8 +1052,8 @@
      <rect>
       <x>301</x>
       <y>156</y>
-      <width>137</width>
-      <height>126</height>
+      <width>152</width>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">

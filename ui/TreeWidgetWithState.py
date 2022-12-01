@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 
 class TreeWidgetWithState(QWidget):
     def __init__(self):
-        super(TreeWidgetWithState, self).__init__()
+        super().__init__()
         
         self.tree = QTreeWidget()  # 实例化一个TreeWidget对象
         self.tree.setColumnCount(1)  # 设置部件的列数为1
