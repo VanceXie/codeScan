@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 import sys
 
-
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -11,8 +10,8 @@ class SwitchBtn(QWidget):
     # 信号
     checkedChanged = pyqtSignal(bool)
     
-    def __init__(self, parent=None):
-        super(QWidget, self).__init__(parent)
+    def __init__(self):
+        super().__init__()
         
         self.checked = False
         self.bgColorOff = QColor(255, 255, 255)

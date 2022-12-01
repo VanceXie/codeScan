@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f87f60f6-bdd4-4c31-bb1a-c8fe800cc69d" name="raspberry">
+        <fileTransfer rootFolder="/home/ubei" accessType="SFTP" host="192.168.137.45" port="22" sshConfigId="b997ce74-4655-423e-aeb9-bcfe3814196d" sshConfig="ubei@192.168.137.45:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions controlEncoding="UTF-8" dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -37,11 +37,11 @@ class ZXQRcode(object):
             pass
     
     # 解析二维码
-    def analysis_QR(self, image_path):
+    def analysis_QR(self, image):
         # 读入图片
         try:
-            imageFile = self.File(image_path)
-            image = self.ImageIO.read(imageFile)
+            # imageFile = self.File(image_path)
+            # image = self.ImageIO.read(imageFile)
             source = self.BufferedImageLuminanceSource(image)
             hybridBinarizer = self.HybridBinarizer(source)
             matrix = hybridBinarizer.getBlackMatrix()
@@ -62,13 +62,5 @@ class ZXQRcode(object):
             return False
 
 
-image_path = r"D:\Test_Label1\Defect_017.png"
-zx = ZXQRcode()
-if zx.analysis_QR(image_path):
-    code_result, matrix_map, corner_points = zx.analysis_QR(image_path)
-    print(code_result)
-    print(str(matrix_map))
-    print(corner_points)
-else:
-    print('未检出！\n' * 3)
-zx.dels()
+
+
