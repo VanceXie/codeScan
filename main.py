@@ -66,8 +66,13 @@ def capture():
 
 def GUI():
     app = QApplication(sys.argv)
+<<<<<<< HEAD
     window = mainWindow(QPixmap(""))
     # window.ui.imageScene_img.addPixmap(QPixmap(result))
+=======
+    window = mainWindow()
+    
+>>>>>>> 6b7196c15b6ab10ca5609f9990d0842eb896ee90
     sys.exit(app.exec_())
 
 
