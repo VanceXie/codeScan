@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="ubei@192.168.137.105:22 key" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="raspberry">
@@ -10,10 +10,10 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="ubei@192.168.137.45:22 key">
+      <paths name="ubei@192.168.137.105:22 key">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/ubei/Documents/Projects/codeScan" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/ubei/Documents/codeScan" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

@@ -10,7 +10,7 @@ import sys
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-<<<<<<< HEAD
+
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import ui.Rose_rc
@@ -24,20 +24,6 @@ class Ui_MainWindow(QMainWindow):
         self.show()
     
     def setupUi(self, MainWindow, img):
-=======
-from PyQt5.QtWidgets import QApplication, QMainWindow
-
-import Blue_rc
-import Rose_rc
-
-
-class Ui_MainWindow(QMainWindow):
-    def __init__(self):
-        super(Ui_MainWindow, self).__init__()
-        self.setupUi(self)
-        self.show()
-    def setupUi(self, MainWindow):
->>>>>>> 6b7196c15b6ab10ca5609f9990d0842eb896ee90
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 960)
         font = QtGui.QFont()
@@ -101,17 +87,17 @@ class Ui_MainWindow(QMainWindow):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(10)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-<<<<<<< HEAD
+        
         self.imageScene_img = QtWidgets.QGraphicsScene(self.imageShow_table)
         self.imageScene_img.addPixmap(img)
         
         self.imageInput_img = QtWidgets.QGraphicsView(self.imageScene_img)
         self.imageInput_img.setObjectName("imageInput_img")
         self.imageInput_img.show()
-=======
+        
         self.imageInput_img = QtWidgets.QGraphicsView(self.imageShow_table)
         self.imageInput_img.setObjectName("imageInput_img")
->>>>>>> 6b7196c15b6ab10ca5609f9990d0842eb896ee90
+        
         self.horizontalLayout_2.addWidget(self.imageInput_img)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -486,13 +472,8 @@ class Ui_MainWindow(QMainWindow):
         self.minimize.setText(_translate("MainWindow", "最小化"))
         self.function.setText(_translate("MainWindow", "功能"))
 
-<<<<<<< HEAD
 
 # app = QApplication(sys.argv)
 # window = Ui_MainWindow()
 # sys.exit(app.exec_())
-=======
-app = QApplication(sys.argv)
-window = Ui_MainWindow()
-sys.exit(app.exec_())
->>>>>>> 6b7196c15b6ab10ca5609f9990d0842eb896ee90
+
