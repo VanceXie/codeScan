@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-# Form implementation generated from reading ui file 'scan_display_main.ui'
+# Form implementation generated from reading gui file 'scan_display_main.gui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -13,8 +13,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow
-import ui.Rose_rc
-import ui.Rose_rc
+import gui.Rose_rc
+import gui.Rose_rc
 
 
 class Ui_MainWindow(QMainWindow):

@@ -105,9 +105,3 @@ class TreeWidgetWithState(QWidget):
         for ii in Item_list:
             print(ii.text(0))
 
-
-app = QApplication(sys.argv)
-app.aboutToQuit.connect(app.deleteLater)
-tp = TreeWidgetWithState()
-tp.show()
-app.exec_()

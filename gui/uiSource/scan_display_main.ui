@@ -22,7 +22,7 @@
    <string>智能相机</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons/Rose.qrc">
+   <iconset resource="Rose.qrc">
     <normaloff>:/Rose/camera.svg</normaloff>:/Rose/camera.svg</iconset>
   </property>
   <property name="windowOpacity">
@@ -112,7 +112,7 @@
         </font>
        </property>
        <attribute name="icon">
-        <iconset resource="icons/Rose.qrc">
+        <iconset resource="Rose.qrc">
          <normaloff>:/Rose/camera.svg</normaloff>:/Rose/camera.svg</iconset>
        </attribute>
        <attribute name="title">
@@ -307,7 +307,7 @@
                 <string>开始采图</string>
                </property>
                <property name="icon">
-                <iconset resource="icons/Rose.qrc">
+                <iconset resource="Rose.qrc">
                  <normaloff>:/Rose/start.svg</normaloff>:/Rose/start.svg</iconset>
                </property>
                <property name="shortcut">
@@ -733,7 +733,7 @@
         </font>
        </property>
        <attribute name="icon">
-        <iconset resource="icons/Rose.qrc">
+        <iconset resource="Rose.qrc">
          <normaloff>:/Rose/save.svg</normaloff>:/Rose/save.svg</iconset>
        </attribute>
        <attribute name="title">
@@ -1180,8 +1180,8 @@
   <tabstop>imageInput_img</tabstop>
  </tabstops>
  <resources>
-  <include location="icons/Rose.qrc"/>
-  <include location="icons/Blue.qrc"/>
+  <include location="Rose.qrc"/>
+  <include location="Blue.qrc"/>
  </resources>
  <connections>
   <connection>

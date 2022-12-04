@@ -61,8 +61,3 @@ class TableWidget(QWidget):
         sb.setPrefix("RMB: ")  # 设置前辍
         sb.setSingleStep(100)
         self.tableWidget.setCellWidget(1, 4, sb)
-
-
-app = QApplication(sys.argv)
-dlg = TableWidget(2, 5)
-sys.exit(app.exec_())
