@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pyzxing import *
 
-from Capture.codeTest_java import ZXQRcode
+from caprure.codeTest_java import ZXQRcode
 
 '''pyzxing解码'''
 

@@ -21,7 +21,6 @@ class Ui_MainWindow(QMainWindow):
     def __init__(self, img):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self, img)
-        self.show()
     
     def setupUi(self, MainWindow, img):
         MainWindow.setObjectName("MainWindow")
@@ -93,12 +92,9 @@ class Ui_MainWindow(QMainWindow):
         
         self.imageInput_img = QtWidgets.QGraphicsView(self.imageScene_img)
         self.imageInput_img.setObjectName("imageInput_img")
-        self.imageInput_img.show()
-        
-        self.imageInput_img = QtWidgets.QGraphicsView(self.imageShow_table)
-        self.imageInput_img.setObjectName("imageInput_img")
         
         self.horizontalLayout_2.addWidget(self.imageInput_img)
+
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(10)
@@ -471,9 +467,4 @@ class Ui_MainWindow(QMainWindow):
         self.logLocation.setText(_translate("MainWindow", "打开日志所在位置"))
         self.minimize.setText(_translate("MainWindow", "最小化"))
         self.function.setText(_translate("MainWindow", "功能"))
-
-
-# app = QApplication(sys.argv)
-# window = Ui_MainWindow()
-# sys.exit(app.exec_())
 

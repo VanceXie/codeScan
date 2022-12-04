@@ -22,7 +22,7 @@
    <string>智能相机</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="Qrc/Rose.qrc">
+   <iconset resource="icons/Rose.qrc">
     <normaloff>:/Rose/camera.svg</normaloff>:/Rose/camera.svg</iconset>
   </property>
   <property name="windowOpacity">
@@ -70,7 +70,7 @@
       <property name="font">
        <font>
         <family>Adobe 黑体 Std R</family>
-        <pointsize>12</pointsize>
+        <pointsize>11</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -82,7 +82,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="iconSize">
        <size>
@@ -106,145 +106,131 @@
        <property name="font">
         <font>
          <family>Adobe 黑体 Std R</family>
-         <pointsize>12</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
        <attribute name="icon">
-        <iconset resource="Qrc/Rose.qrc">
+        <iconset resource="icons/Rose.qrc">
          <normaloff>:/Rose/camera.svg</normaloff>:/Rose/camera.svg</iconset>
        </attribute>
        <attribute name="title">
         <string>显示界面</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,1">
+       <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,1" columnminimumwidth="0,0">
         <property name="leftMargin">
-         <number>10</number>
+         <number>5</number>
         </property>
         <property name="topMargin">
-         <number>10</number>
+         <number>5</number>
         </property>
         <property name="rightMargin">
-         <number>10</number>
+         <number>5</number>
         </property>
         <property name="bottomMargin">
-         <number>10</number>
+         <number>5</number>
         </property>
         <property name="spacing">
-         <number>10</number>
+         <number>5</number>
         </property>
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout" stretch="3,1,0">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="5,2,0">
           <property name="spacing">
-           <number>10</number>
+           <number>5</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>10</number>
-            </property>
-            <item>
-             <widget class="QGraphicsView" name="imageInput_img"/>
-            </item>
-           </layout>
+           <widget class="QGraphicsView" name="imageInput_img"/>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="spacing">
-             <number>10</number>
+           <widget class="QTableWidget" name="tableWidget">
+            <property name="showGrid">
+             <bool>true</bool>
             </property>
-            <item>
-             <widget class="QTableWidget" name="tableWidget">
-              <property name="showGrid">
-               <bool>true</bool>
-              </property>
-              <property name="sortingEnabled">
-               <bool>true</bool>
-              </property>
-              <attribute name="horizontalHeaderVisible">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="horizontalHeaderCascadingSectionResizes">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="horizontalHeaderMinimumSectionSize">
-               <number>150</number>
-              </attribute>
-              <attribute name="horizontalHeaderDefaultSectionSize">
-               <number>150</number>
-              </attribute>
-              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-               <bool>false</bool>
-              </attribute>
-              <attribute name="horizontalHeaderStretchLastSection">
-               <bool>true</bool>
-              </attribute>
-              <attribute name="verticalHeaderMinimumSectionSize">
-               <number>30</number>
-              </attribute>
-              <attribute name="verticalHeaderDefaultSectionSize">
-               <number>40</number>
-              </attribute>
-              <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-               <bool>true</bool>
-              </attribute>
-              <attribute name="verticalHeaderStretchLastSection">
-               <bool>false</bool>
-              </attribute>
-              <row>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </row>
-              <row>
-               <property name="text">
-                <string>2</string>
-               </property>
-              </row>
-              <column>
-               <property name="text">
-                <string>检测结果</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>条码缺陷</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>条码结构特性</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>条码光学特性</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>字符缺陷</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>字符结构特性</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>字码一致性</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>标签位置姿态</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+            <attribute name="horizontalHeaderVisible">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderCascadingSectionResizes">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>100</number>
+            </attribute>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>105</number>
+            </attribute>
+            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>30</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>40</number>
+            </attribute>
+            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderStretchLastSection">
+             <bool>false</bool>
+            </attribute>
+            <row>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>检测结果</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>条码缺陷</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>条码结构特性</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>条码光学特性</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>字符缺陷</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>字符结构特性</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>字码一致性</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>标签位置姿态</string>
+             </property>
+            </column>
+           </widget>
           </item>
           <item>
            <widget class="QFrame" name="frame">
@@ -321,7 +307,7 @@
                 <string>开始采图</string>
                </property>
                <property name="icon">
-                <iconset resource="Qrc/Rose.qrc">
+                <iconset resource="icons/Rose.qrc">
                  <normaloff>:/Rose/start.svg</normaloff>:/Rose/start.svg</iconset>
                </property>
                <property name="shortcut">
@@ -359,7 +345,7 @@
         <item row="0" column="1">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="spacing">
-           <number>10</number>
+           <number>7</number>
           </property>
           <item>
            <widget class="QTreeWidget" name="treeWidget">
@@ -385,11 +371,7 @@
              <bool>false</bool>
             </property>
             <property name="headerHidden">
-<<<<<<< HEAD
              <bool>true</bool>
-=======
-             <bool>false</bool>
->>>>>>> 6b7196c15b6ab10ca5609f9990d0842eb896ee90
             </property>
             <attribute name="headerVisible">
              <bool>false</bool>
@@ -625,6 +607,14 @@
                 <enum>Checked</enum>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>标签位置姿态</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
              </item>
              <item>
               <property name="text">
@@ -643,28 +633,20 @@
               </item>
               <item>
                <property name="text">
+                <string>字码一致性</string>
+               </property>
+               <property name="checkState">
+                <enum>Checked</enum>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>字符结构特性</string>
                </property>
                <property name="checkState">
                 <enum>Checked</enum>
                </property>
               </item>
-             </item>
-             <item>
-              <property name="text">
-               <string>字码一致性</string>
-              </property>
-              <property name="checkState">
-               <enum>Checked</enum>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>标签位置姿态</string>
-              </property>
-              <property name="checkState">
-               <enum>Checked</enum>
-              </property>
              </item>
             </item>
            </widget>
@@ -751,7 +733,7 @@
         </font>
        </property>
        <attribute name="icon">
-        <iconset resource="Qrc/Rose.qrc">
+        <iconset resource="icons/Rose.qrc">
          <normaloff>:/Rose/save.svg</normaloff>:/Rose/save.svg</iconset>
        </attribute>
        <attribute name="title">
@@ -812,8 +794,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1211</width>
-             <height>878</height>
+             <width>1224</width>
+             <height>904</height>
             </rect>
            </property>
            <property name="font">
@@ -851,10 +833,7 @@
                </font>
               </property>
               <property name="currentIndex">
-               <number>1</number>
-              </property>
-              <property name="tabSpacing">
-               <number>5</number>
+               <number>0</number>
               </property>
               <property name="tabSpacing">
                <number>5</number>
@@ -864,8 +843,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1206</width>
-                 <height>797</height>
+                 <width>1219</width>
+                 <height>841</height>
                 </rect>
                </property>
                <property name="font">
@@ -925,8 +904,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>1183</width>
-                     <height>774</height>
+                     <width>1204</width>
+                     <height>826</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -947,8 +926,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1206</width>
-                 <height>797</height>
+                 <width>87</width>
+                 <height>59</height>
                 </rect>
                </property>
                <property name="font">
@@ -1008,8 +987,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>1183</width>
-                     <height>774</height>
+                     <width>72</width>
+                     <height>44</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -1043,13 +1022,13 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>29</height>
+     <height>19</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Adobe 黑体 Std R</family>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -1057,10 +1036,10 @@
    <widget class="QMenu" name="file">
     <property name="geometry">
      <rect>
-      <x>301</x>
-      <y>156</y>
-      <width>152</width>
-      <height>141</height>
+      <x>265</x>
+      <y>111</y>
+      <width>119</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="title">
@@ -1095,6 +1074,8 @@
     <property name="title">
      <string>设置&amp;S</string>
     </property>
+    <addaction name="actionzhuto"/>
+    <addaction name="actionziti"/>
    </widget>
    <widget class="QMenu" name="window">
     <property name="title">
@@ -1131,7 +1112,7 @@
   </action>
   <action name="showLog">
    <property name="text">
-    <string>查看当前日志</string>
+    <string>查看当前日志&amp;E</string>
    </property>
   </action>
   <action name="open">
@@ -1160,12 +1141,15 @@
   </action>
   <action name="logLocation">
    <property name="text">
-    <string>打开日志所在位置</string>
+    <string>打开日志所在位置&amp;O</string>
    </property>
   </action>
   <action name="minimize">
    <property name="text">
-    <string>最小化</string>
+    <string>最小化&amp;M</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="function">
@@ -1176,7 +1160,17 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>功能</string>
+    <string>功能&amp;F</string>
+   </property>
+  </action>
+  <action name="actionzhuto">
+   <property name="text">
+    <string>主题&amp;T</string>
+   </property>
+  </action>
+  <action name="actionziti">
+   <property name="text">
+    <string>字体&amp;F</string>
    </property>
   </action>
  </widget>
@@ -1186,8 +1180,25 @@
   <tabstop>imageInput_img</tabstop>
  </tabstops>
  <resources>
-  <include location="Qrc/Rose.qrc"/>
-  <include location="qrc/Blue.qrc"/>
+  <include location="icons/Rose.qrc"/>
+  <include location="icons/Blue.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>imageCapture</sender>
+   <signal>clicked()</signal>
+   <receiver>imageInput_img</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>496</x>
+     <y>913</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>351</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

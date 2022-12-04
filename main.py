@@ -1,13 +1,3 @@
-# import sys
-# from PyQt5 import QtWidgets
-# import ui.scan_display_main
-#
-#
-# if __name__ == "__main__":
-#     mypro = QtWidgets.QApplication(sys.argv)
-#     mywin = ui.scan_display_main.Ui_MainWindow()
-#     mywin.show()
-#     sys.exit(mypro.exec_())
 import sys
 import threading
 import time
@@ -64,20 +54,7 @@ def capture():
     #     break
 
 
-def GUI():
-    app = QApplication(sys.argv)
-    
-    window = mainWindow(QPixmap(""))
-    # window.ui.imageScene_img.addPixmap(QPixmap(result))
-    
-    window = mainWindow()
-    
-    sys.exit(app.exec_())
-
-
 if __name__ == "__main__":
-    # t = threading.Thread(target=capture)
-    # t.start()
-    
-    t2 = threading.Thread(target=GUI())
-    t2.start()
+    app = QApplication(sys.argv)
+    window = mainWindow(QPixmap(r"ui/icons/01.jpg"))
+    sys.exit(app.exec_())
