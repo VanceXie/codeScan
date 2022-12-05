@@ -60,7 +60,7 @@ class ZXQRcode(object):
             # coordinateList = [str(resultPoints[0]), str(resultPoints[1]), str(resultPoints[2]), str(resultPoints[3])]
             coordinateList = []
             for i in resultPoints:
-                coordinateList.append(str(i))
+                coordinateList.append([i.getX(), i.getY()])
             matrix1 = detectorResult.getBits()
             result = self.MultiFormatReader().decode(binaryBitmap, hints)
             return result.getText(), matrix1, coordinateList
