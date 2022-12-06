@@ -66,7 +66,7 @@ def zXing_java(image_captured):
 #     img_captured = cv2.flip(frame, 1)
 #
 #     img_detected = zXing_java(img_captured)
-#     if img_detected is not None:
+#     if ret:
 #         cv2.imshow("result", img_detected)
 #
 #     else:

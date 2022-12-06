@@ -1,5 +1,6 @@
 import sys
 
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from gui.scan_display_main import Ui_MainWindow
@@ -19,7 +20,7 @@ class mainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = mainWindow()
-    # QApplication.processEvents()
+
     # capThread = CaptureThread(window)
     # capThread.start()
     sys.exit(app.exec_())

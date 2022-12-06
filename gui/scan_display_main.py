@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from PIL import Image
 # Form implementation generated from reading ui file 'scan_display_main.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
@@ -17,10 +17,10 @@ from detection import captureThread
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
-        self.thread = captureThread.CaptureThread(self)
-        # self.thread1 = captureThread.ShowThread(self)
+        self.img_capture_thread = captureThread.CaptureThread()
+        # self.img_show_thread = captureThread.ShowThread(self, self.img_capture_thread.image)
         self.setupUi(self)
-
+    
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 960)
@@ -82,11 +82,11 @@ class Ui_MainWindow(QMainWindow):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(5)
         self.verticalLayout.setObjectName("verticalLayout")
-
+        
         self.imageScene_img = QtWidgets.QGraphicsScene(self.imageShow_table)
         self.imageInput_img = QtWidgets.QGraphicsView(self.imageScene_img)
         self.imageInput_img.setObjectName("imageInput_img")
-
+        
         self.verticalLayout.addWidget(self.imageInput_img)
         self.tableWidget = QtWidgets.QTableWidget(self.imageShow_table)
         self.tableWidget.setShowGrid(True)
@@ -134,10 +134,10 @@ class Ui_MainWindow(QMainWindow):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         spacerItem = QtWidgets.QSpacerItem(394, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
+        
         self.imageCapture = QtWidgets.QPushButton(self.frame)
-
         self.imageCapture.clicked.connect(self.slotStart)
-
+        
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -483,7 +483,7 @@ class Ui_MainWindow(QMainWindow):
         self.menubar.addAction(self.window.menuAction())
         self.menubar.addAction(self.log.menuAction())
         self.menubar.addAction(self.help.menuAction())
-
+        
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
@@ -492,7 +492,7 @@ class Ui_MainWindow(QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.imageCapture)
         MainWindow.setTabOrder(self.imageCapture, self.imageInput_img)
-
+    
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "智能相机"))
@@ -518,7 +518,7 @@ class Ui_MainWindow(QMainWindow):
         item = self.tableWidget.horizontalHeaderItem(7)
         item.setText(_translate("MainWindow", "标签位置姿态"))
         self.imageCapture.setToolTip(
-            _translate("MainWindow", "<html><head/><body><p>开始采集图像 Ctrl+P</p></body></html>"))
+                _translate("MainWindow", "<html><head/><body><p>开始采集图像 Ctrl+P</p></body></html>"))
         self.imageCapture.setStatusTip(_translate("MainWindow", "图像采集中"))
         self.imageCapture.setText(_translate("MainWindow", "开始采图"))
         self.imageCapture.setShortcut(_translate("MainWindow", "Ctrl+P"))
@@ -585,7 +585,17 @@ class Ui_MainWindow(QMainWindow):
         self.function.setText(_translate("MainWindow", "功能&F"))
         self.actionzhuto.setText(_translate("MainWindow", "主题&T"))
         self.actionziti.setText(_translate("MainWindow", "字体&F"))
-
+    
     def slotStart(self):
-        self.thread.start()
-        # self.thread1.start()
+        if self.imageCapture.isChecked():
+            self.img_capture_thread.start()
+            # self.img_show_thread.start()
+            if self.img_capture_thread.image is not None:
+                img_pil = Image.fromarray(self.img_capture_thread.image)
+                img_pix = img_pil.toqpixmap()  # QPixmap
+                self.imageScene_img.addPixmap(QPixmap(img_pix))
+                self.imageInput_img.viewport().update()
+                QtWidgets.QApplication.processEvents()
+        else:
+            self.img_capture_thread.sleep(0)
+
