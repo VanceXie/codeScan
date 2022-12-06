@@ -18,6 +18,7 @@ class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.thread = captureThread.CaptureThread(self)
+        # self.thread1 = captureThread.ShowThread(self)
         self.setupUi(self)
 
     def setupUi(self, MainWindow):
@@ -85,7 +86,6 @@ class Ui_MainWindow(QMainWindow):
         self.imageScene_img = QtWidgets.QGraphicsScene(self.imageShow_table)
         self.imageInput_img = QtWidgets.QGraphicsView(self.imageScene_img)
         self.imageInput_img.setObjectName("imageInput_img")
-
 
         self.verticalLayout.addWidget(self.imageInput_img)
         self.tableWidget = QtWidgets.QTableWidget(self.imageShow_table)
@@ -588,3 +588,4 @@ class Ui_MainWindow(QMainWindow):
 
     def slotStart(self):
         self.thread.start()
+        # self.thread1.start()

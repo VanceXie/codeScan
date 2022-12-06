@@ -19,7 +19,7 @@ class mainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = mainWindow()
-    QApplication.processEvents()
+    # QApplication.processEvents()
     # capThread = CaptureThread(window)
     # capThread.start()
     sys.exit(app.exec_())

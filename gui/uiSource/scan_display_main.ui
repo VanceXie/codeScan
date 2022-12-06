@@ -794,8 +794,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1224</width>
-             <height>904</height>
+             <width>1213</width>
+             <height>880</height>
             </rect>
            </property>
            <property name="font">
@@ -843,8 +843,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1219</width>
-                 <height>841</height>
+                 <width>1208</width>
+                 <height>799</height>
                 </rect>
                </property>
                <property name="font">
@@ -904,8 +904,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>1204</width>
-                     <height>826</height>
+                     <width>1185</width>
+                     <height>776</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -927,7 +927,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>87</width>
-                 <height>59</height>
+                 <height>87</height>
                 </rect>
                </property>
                <property name="font">
@@ -987,8 +987,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>72</width>
-                     <height>44</height>
+                     <width>64</width>
+                     <height>36</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -1022,7 +1022,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>19</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
@@ -1038,8 +1038,8 @@
      <rect>
       <x>265</x>
       <y>111</y>
-      <width>119</width>
-      <height>91</height>
+      <width>147</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">

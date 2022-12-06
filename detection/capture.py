@@ -1,37 +1,24 @@
-import cv2
-import numpy as np
-from PIL import Image
+import cv2 as cv
 
-result = None
+# 读取设备
+cap = cv.VideoCapture('/dev/video0', cv.CAP_V4L)
+# 读取摄像头FPS
+fps = cap.get(cv.CAP_PROP_FPS)
 
+# set dimensions 设置分辨率
+cap.set(cv.CAP_PROP_FRAME_WIDTH, 800)
+cap.set(cv.CAP_PROP_FRAME_HEIGHT, 400)
 
-def capture():
-    global result
-    cap = cv2.VideoCapture(0)  # 调整参数实现读取视频或调用摄像头
-    cap.set(3, 1280)
-    cap.set(4, 720)
-    fps = cap.get(cv2.CAP_PROP_FPS)  # 计算视频的帧率
-    print("fps:", fps)
-    while True:
-        # 加载图片
-        ret, frame = cap.read()
-        # frame = cv2.flip(frame, 1)
-        # 实例化
-        qrcoder = cv2.QRCodeDetector()
-        # qr检测并解码
-        codeinfo, points, straight_qrcode = qrcoder.detectAndDecode(frame)
-        # 绘制qr的检测结果
-        if codeinfo and points is not None:
-            cv2.drawContours(frame, [np.int32(points)], 0, (0, 0, 255), 2)
-            print(points)
-            # 打印解码结果
-            print("qrcode :", codeinfo)
-        else:
-            print("QR code not detected")
-        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        cv2.imshow("result", frame)
-        if cv2.waitKey(50) & 0xff == ord('q'):
-            break
+video = cv.VideoWriter('video.avi', cv.VideoWriter_fourcc('I', '4', '2', '0'), fps, (800, 400)) # 初始化文件写入 文件名 编码解码器 帧率 文件大小
 
+# 录制10帧
+for i in range(10):
+    # take frame 读取帧
+    ret, frame = cap.read()
+    if ret:
+        # write frame to file
+        cv.imwrite('image-{}.jpg'.format(i), frame) # 截图
+        video.write(frame) # 录制视频
 
-capture()
+# release camera 必须要释放摄像头
+cap.release()
