@@ -15,6 +15,7 @@ def capture():
     while True:
         # 加载图片
         ret, frame = cap.read()
+        # frame = cv2.flip(frame, 1)
         # 实例化
         qrcoder = cv2.QRCodeDetector()
         # qr检测并解码

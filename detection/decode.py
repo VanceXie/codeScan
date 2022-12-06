@@ -24,14 +24,15 @@ def zXingCode(img, url):
 
 
 def weChatCode(img):
-    detector = cv2.wechat_qrcode_WeChatQRCode("./wechat_qrcode_model/detect.prototxt",
-                                              "./wechat_qrcode_model/detect.caffemodel",
-                                              "./wechat_qrcode_model/sr.prototxt",
-                                              "./wechat_qrcode_model/sr.caffemodel")
+    detector = cv2.wechat_qrcode_WeChatQRCode(r"D:\Project\codeScan\detection\wechat_qrcode_model\detect.prototxt",
+                                              r"D:\Project\codeScan\detection\wechat_qrcode_model\detect.caffemodel",
+                                              r"D:\Project\codeScan\detection\wechat_qrcode_model\sr.prototxt",
+                                              r"D:\Project\codeScan\detection\wechat_qrcode_model\sr.caffemodel")
     res, points = detector.detectAndDecode(img)
-    
+
     print(res, points)
-    image_detected = cv2.drawContours(img, [np.int32(points)], -1, (0, 0, 255), 2)
+    if points is not None:
+        image_detected = cv2.drawContours(img, [np.int32(points)], -1, (0, 0, 255), 2)
     return image_detected
 
 
@@ -39,7 +40,7 @@ def zXing_java(image_captured):
     success, encoded_image = cv2.imencode(".jpg", image_captured)  # 将获取的图片编码，以便后续转换为字节流
     image_bytes = encoded_image.tobytes()  # 将编码后的图片编码为字节流，不能直接将ndarray对象直接编码为字节，Java接口不能识别
     zx = ZXQRcode()  # 创建解码对象
-    
+
     if zx.analysis_QR(image_bytes):
         code_result, matrix_map, corner_points = zx.analysis_QR(image_bytes)
         print(code_result)
@@ -49,27 +50,28 @@ def zXing_java(image_captured):
         image_detected_contours = cv2.drawContours(image_captured, [np.int32(corner_points)], -1, (0, 0, 255), 2)
         image_detected_all = cv2.putText(image_detected_contours, str(code_result), (5, 50), cv2.FONT_HERSHEY_PLAIN,
                                          3.0, (0, 255, 0), 3)
-    
+
     else:
         image_detected_all = cv2.putText(image_captured, 'not Found!', (5, 50), cv2.FONT_HERSHEY_PLAIN, 3.0,
                                          (0, 0, 255), 3)
     return image_detected_all
     # zx.dels()
 
-
-cap = cv2.VideoCapture(0)  # 调整参数实现读取视频或调用摄像头
-
-while True:
-    # 采集图片
-    ret, frame = cap.read()
-    img_captured = cv2.flip(frame, 1)
-    
-    img_detected = zXing_java(img_captured)
-    if img_detected is not None:
-        cv2.imshow("result", img_detected)
-    else:
-        cv2.imshow("result", img_captured)
-    if cv2.waitKey(500) & 0xff == ord('q'):
-        break
-cap.release()
-cv2.destroyAllWindows()
+# cap = cv2.VideoCapture(0)  # 调整参数实现读取视频或调用摄像头
+# cap.set(3, 1280)
+# cap.set(4, 720)
+# while True:
+#     # 采集图片
+#     ret, frame = cap.read()
+#     img_captured = cv2.flip(frame, 1)
+#
+#     img_detected = zXing_java(img_captured)
+#     if img_detected is not None:
+#         cv2.imshow("result", img_detected)
+#
+#     else:
+#         cv2.imshow("result", img_captured)
+#     if cv2.waitKey(1) & 0xff == ord('q'):
+#         break
+# cap.release()
+# cv2.destroyAllWindows()

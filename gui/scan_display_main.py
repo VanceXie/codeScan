@@ -9,13 +9,17 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow
+from detection import captureThread
 
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
+        self.thread = captureThread.CaptureThread(self)
         self.setupUi(self)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 960)
@@ -82,6 +86,7 @@ class Ui_MainWindow(QMainWindow):
         self.imageInput_img = QtWidgets.QGraphicsView(self.imageScene_img)
         self.imageInput_img.setObjectName("imageInput_img")
 
+
         self.verticalLayout.addWidget(self.imageInput_img)
         self.tableWidget = QtWidgets.QTableWidget(self.imageShow_table)
         self.tableWidget.setShowGrid(True)
@@ -130,6 +135,9 @@ class Ui_MainWindow(QMainWindow):
         spacerItem = QtWidgets.QSpacerItem(394, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
         self.imageCapture = QtWidgets.QPushButton(self.frame)
+
+        self.imageCapture.clicked.connect(self.slotStart)
+
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -509,7 +517,8 @@ class Ui_MainWindow(QMainWindow):
         item.setText(_translate("MainWindow", "字码一致性"))
         item = self.tableWidget.horizontalHeaderItem(7)
         item.setText(_translate("MainWindow", "标签位置姿态"))
-        self.imageCapture.setToolTip(_translate("MainWindow", "<html><head/><body><p>开始采集图像 Ctrl+P</p></body></html>"))
+        self.imageCapture.setToolTip(
+            _translate("MainWindow", "<html><head/><body><p>开始采集图像 Ctrl+P</p></body></html>"))
         self.imageCapture.setStatusTip(_translate("MainWindow", "图像采集中"))
         self.imageCapture.setText(_translate("MainWindow", "开始采图"))
         self.imageCapture.setShortcut(_translate("MainWindow", "Ctrl+P"))
@@ -523,7 +532,8 @@ class Ui_MainWindow(QMainWindow):
         self.treeWidget.topLevelItem(0).child(0).child(0).child(1).setText(0, _translate("MainWindow", "UPC-E"))
         self.treeWidget.topLevelItem(0).child(0).child(0).child(2).setText(0, _translate("MainWindow", "EAN-8"))
         self.treeWidget.topLevelItem(0).child(0).child(0).child(3).setText(0, _translate("MainWindow", "EAN-13"))
-        self.treeWidget.topLevelItem(0).child(0).child(0).child(4).setText(0, _translate("MainWindow", "UPC/EAN Extension 2/5"))
+        self.treeWidget.topLevelItem(0).child(0).child(0).child(4).setText(0, _translate("MainWindow",
+                                                                                         "UPC/EAN Extension 2/5"))
         self.treeWidget.topLevelItem(0).child(0).child(1).setText(0, _translate("MainWindow", "工业码"))
         self.treeWidget.topLevelItem(0).child(0).child(1).child(0).setText(0, _translate("MainWindow", "Code 39"))
         self.treeWidget.topLevelItem(0).child(0).child(1).child(1).setText(0, _translate("MainWindow", "Code 93"))
@@ -576,3 +586,5 @@ class Ui_MainWindow(QMainWindow):
         self.actionzhuto.setText(_translate("MainWindow", "主题&T"))
         self.actionziti.setText(_translate("MainWindow", "字体&F"))
 
+    def slotStart(self):
+        self.thread.start()
