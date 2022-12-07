@@ -23,4 +23,8 @@ if __name__ == "__main__":
 
     # capThread = CaptureThread(window)
     # capThread.start()
-    sys.exit(app.exec_())
+    if not app.exec_():
+        window.ui.img_capture_thread.terminate()
+        # window.ui.img_capture_thread.wait()
+
+        sys.exit(app.exec_())

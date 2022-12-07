@@ -9,7 +9,6 @@ print(fps)
 cap.set(3, 1280)
 cap.set(4, 720)
 
-# 录制10帧
 while True:
     # take frame 读取帧
     ret, frame = cap.read()

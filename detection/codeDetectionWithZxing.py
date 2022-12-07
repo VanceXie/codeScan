@@ -5,8 +5,8 @@ from jpype import *
 class ZXQRcode(object):
     def __init__(self):
         # jar包的路径
-        self.jar_path1 = r"D:\Program\codeScan\jar_lib\core.jar"
-        self.jar_path2 = r"D:\Program\codeScan\jar_lib\javase.jar"
+        self.jar_path1 = r".\jar_lib\core.jar"
+        self.jar_path2 = r".\jar_lib\javase.jar"
         # 启动JVM
         try:
             jvm_path = jpype.getDefaultJVMPath()
