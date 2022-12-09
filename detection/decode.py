@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pyzxing import *
 
-from detection.codeDetectionWithZxing import ZXQRcode
+from .DecoderWithZxing import ZXQRcode
 
 
 def decode_pyzxing(img, url):
@@ -40,19 +40,11 @@ def decode_wechat(img):
     return image_detected_all
 
 
-# class Decoder_Zxing():
-#     def __init__(self):
-#         self.QRdecoder =ZXQRcode()
-
-
-
 def decode_zxing(image_captured):
-    success, encoded_image = cv2.imencode(".jpg", image_captured)  # 将获取的图片编码，以便后续转换为字节流
-    image_bytes = encoded_image.tobytes()  # 将编码后的图片编码为字节流，不能直接将ndarray对象直接编码为字节，Java接口不能识别
     zx = ZXQRcode()  # 创建QR解码对象
-    if zx.analysis_QR(image_bytes):
-        code_result, matrix_map, corner_points = zx.analysis_QR(image_bytes)
-        print("解码信息" + code_result)
+    if zx.analysis_QR(image_captured):
+        code_result, matrix_map, corner_points = zx.analysis_QR(image_captured)
+        # print("解码信息" + code_result)
         # print(str(matrix_map))
         # print(corner_points)
         corner_points = np.asarray(corner_points)

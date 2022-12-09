@@ -1,3 +1,4 @@
+import cv2
 import jpype
 from jpype import *
 
@@ -37,12 +38,13 @@ class ZXQRcode(object):
             pass
 
     # 解析二维码
-    def analysis_QR(self, image_byte):
+    def analysis_QR(self, image_captured):
         # 读入图片
         try:
             # imageFile = self.File(image_path)
-
-            image_stream = self.byteArrayInputStream(image_byte)  # 根据字节数组创建图片的字节数组输入流
+            success, encoded_image = cv2.imencode(".jpg", image_captured)  # 将获取的ndarray图片编码，以便后续转换为字节流
+            image_bytes = encoded_image.tobytes()  # 将编码后的图片编码为字节流，不能直接将ndarray对象直接编码为字节，Java接口不能识别
+            image_stream = self.byteArrayInputStream(image_bytes)  # 根据字节数组创建图片的字节数组输入流
             image_cache = self.memoryCacheImageInputStream(image_stream)  # 根据输入流创建一个MemoryCacheImageInputStream对象
             bufferedImage = self.ImageIO.read(image_cache)  # 根据输入流创建一个BufferedImage对象
             source = self.BufferedImageLuminanceSource(

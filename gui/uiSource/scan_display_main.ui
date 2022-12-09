@@ -135,12 +135,19 @@
          <number>5</number>
         </property>
         <item row="0" column="0">
-         <layout class="QVBoxLayout" name="verticalLayout" stretch="5,2,0">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="3,1,0">
           <property name="spacing">
            <number>5</number>
           </property>
           <item>
-           <widget class="QGraphicsView" name="imageInput_img"/>
+           <widget class="QLabel" name="label">
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QTableWidget" name="tableWidget">
@@ -157,10 +164,10 @@
              <bool>false</bool>
             </attribute>
             <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>100</number>
+             <number>105</number>
             </attribute>
             <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>105</number>
+             <number>110</number>
             </attribute>
             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
              <bool>false</bool>
@@ -794,8 +801,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1224</width>
-             <height>904</height>
+             <width>1213</width>
+             <height>880</height>
             </rect>
            </property>
            <property name="font">
@@ -843,8 +850,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1219</width>
-                 <height>841</height>
+                 <width>1208</width>
+                 <height>799</height>
                 </rect>
                </property>
                <property name="font">
@@ -904,8 +911,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>1204</width>
-                     <height>826</height>
+                     <width>1185</width>
+                     <height>776</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -927,7 +934,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>87</width>
-                 <height>59</height>
+                 <height>87</height>
                 </rect>
                </property>
                <property name="font">
@@ -987,8 +994,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>72</width>
-                     <height>72</height>
+                     <width>64</width>
+                     <height>36</height>
                     </rect>
                    </property>
                    <property name="font">
@@ -1022,7 +1029,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>19</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
@@ -1038,8 +1045,8 @@
      <rect>
       <x>265</x>
       <y>111</y>
-      <width>119</width>
-      <height>91</height>
+      <width>147</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">
@@ -1177,28 +1184,10 @@
  <tabstops>
   <tabstop>tabWidget</tabstop>
   <tabstop>imageCapture</tabstop>
-  <tabstop>imageInput_img</tabstop>
  </tabstops>
  <resources>
   <include location="Rose.qrc"/>
   <include location="Blue.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>imageCapture</sender>
-   <signal>clicked()</signal>
-   <receiver>imageInput_img</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>496</x>
-     <y>913</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>496</x>
-     <y>351</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
