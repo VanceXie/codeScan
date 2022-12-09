@@ -10,16 +10,14 @@ from PIL import Image
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow
-from detection import captureThread
+from PyQt5.QtWidgets import QApplication
+
+from detection.logicalThread import *
 
 
-class Ui_MainWindow(QMainWindow):
+class Ui_MainWindow(object):
     def __init__(self):
-        super(Ui_MainWindow, self).__init__()
-        self.img_capture_thread = captureThread.CaptureThread()
-        # self.img_show_thread = captureThread.ShowThread(self, self.img_capture_thread.image)
-        self.setupUi(self)
+        self.showThread = ShowThread()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -84,12 +82,14 @@ class Ui_MainWindow(QMainWindow):
         self.verticalLayout.setObjectName("verticalLayout")
 
         self.imageScene_img = QtWidgets.QGraphicsScene(self.imageShow_table)
-        self.imageScene_img.addPixmap(QPixmap(r"D:\Project\codeScan\images\01.jpg"))
-        self.imageInput_img = QtWidgets.QGraphicsView(self.imageScene_img)
-        self.imageInput_img.setObjectName("imageInput_img")
-        self.imageInput_img.setScene(self.imageScene_img)
+        self.imageScene_img.addPixmap(QPixmap(r"./gui/images/welcome.jpg"))
 
-        self.verticalLayout.addWidget(self.imageInput_img)
+        self.imageView_img = QtWidgets.QGraphicsView(self.imageScene_img)
+        self.imageView_img.setObjectName("imageInput_img")
+        self.imageView_img.setScene(self.imageScene_img)
+
+        self.verticalLayout.addWidget(self.imageView_img)
+
         self.tableWidget = QtWidgets.QTableWidget(self.imageShow_table)
         self.tableWidget.setShowGrid(True)
         self.tableWidget.setObjectName("tableWidget")
@@ -138,7 +138,7 @@ class Ui_MainWindow(QMainWindow):
         self.horizontalLayout_3.addItem(spacerItem)
 
         self.imageCapture = QtWidgets.QPushButton(self.frame)
-        self.imageCapture.clicked.connect(self.slotStart)
+        self.imageCapture.clicked.connect(self.capture_signal_slot)
 
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -490,10 +490,10 @@ class Ui_MainWindow(QMainWindow):
         self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         self.toolBox.layout().setSpacing(5)
-        self.imageCapture.clicked.connect(self.imageInput_img.show)
+        self.imageCapture.clicked.connect(self.imageView_img.show)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.imageCapture)
-        MainWindow.setTabOrder(self.imageCapture, self.imageInput_img)
+        MainWindow.setTabOrder(self.imageCapture, self.imageView_img)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -588,19 +588,19 @@ class Ui_MainWindow(QMainWindow):
         self.actionzhuto.setText(_translate("MainWindow", "主题&T"))
         self.actionziti.setText(_translate("MainWindow", "字体&F"))
 
-    def slotStart(self, status):
+    def capture_signal_slot(self, status):
         if status:
-            if self.img_capture_thread.isRunning():
-                self.img_capture_thread.resume()
-            else:
-                self.img_capture_thread.start()
-            if self.img_capture_thread.image is not None:
-                img_pil = Image.fromarray(self.img_capture_thread.image)
-                img_pix = img_pil.toqpixmap()  # QPixmap
-                self.imageScene_img.addPixmap(img_pix)
-
-                self.imageInput_img.show()
-                self.imageInput_img.viewport().update()
-                QtWidgets.QApplication.processEvents()
+            self.img_capture_thread = CaptureThread()
+            self.img_capture_thread.capture_signal.connect(self.show_slot)
+            self.img_capture_thread.start()
         else:
-            self.img_capture_thread.pause()
+            self.img_capture_thread.cap.release()
+            self.img_capture_thread.quit()
+
+    def show_slot(self, image):
+        img_pil = Image.fromarray(image)
+        img_pix = img_pil.toqpixmap()  # QPixmap
+        # self.imageScene_img.clear()
+        self.imageScene_img.addPixmap(img_pix)
+        self.imageView_img.viewport().update()
+        QApplication.processEvents()
