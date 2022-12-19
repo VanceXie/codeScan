@@ -64,5 +64,5 @@ class ZXQRcode(object):
             result = self.MultiFormatReader().decode(binaryBitmap, hints)
             return result.getText(), matrix1, coordinateList
         except Exception as e:
-            print(e)
+            # print(e)
             return False
