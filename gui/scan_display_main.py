@@ -76,7 +76,7 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(5)
         self.verticalLayout.setObjectName("verticalLayout")
-
+        
         # self.imageScene_img = QtWidgets.QGraphicsScene(self.imageShow_table)
         # self.imageScene_img.addPixmap(QPixmap(r"./gui/images/welcome.jpg"))
         #
@@ -84,13 +84,13 @@ class Ui_MainWindow(object):
         # self.imageView_img.setObjectName("imageInput_img")
         # self.imageView_img.setScene(self.imageScene_img)
         # self.verticalLayout.addWidget(self.imageView_img)
-
+        
         self.label = QLabel(self.imageShow_table)
         self.label.setPixmap(QPixmap(r"./gui/images/welcome.jpg"))
         self.label.setObjectName(u"label")
         self.label.setFrameShape(QFrame.Box)
         self.verticalLayout.addWidget(self.label)
-
+        
         self.tableWidget = QtWidgets.QTableWidget(self.imageShow_table)
         self.tableWidget.setShowGrid(True)
         self.tableWidget.setObjectName("tableWidget")
@@ -137,10 +137,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         spacerItem = QtWidgets.QSpacerItem(394, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
-
+        
         self.imageCapture = QtWidgets.QPushButton(self.frame)
         self.imageCapture.clicked.connect(self.capture_signal_slot)
-
+        
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -486,7 +486,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.window.menuAction())
         self.menubar.addAction(self.log.menuAction())
         self.menubar.addAction(self.help.menuAction())
-
+        
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
@@ -495,7 +495,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.imageCapture)
         MainWindow.setTabOrder(self.imageCapture, self.label)
-
+    
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "智能相机"))
@@ -521,7 +521,7 @@ class Ui_MainWindow(object):
         item = self.tableWidget.horizontalHeaderItem(7)
         item.setText(_translate("MainWindow", "标签位置姿态"))
         self.imageCapture.setToolTip(
-            _translate("MainWindow", "<html><head/><body><p>开始采集图像 Ctrl+P</p></body></html>"))
+                _translate("MainWindow", "<html><head/><body><p>开始采集图像 Ctrl+P</p></body></html>"))
         self.imageCapture.setStatusTip(_translate("MainWindow", "图像采集中"))
         self.imageCapture.setText(_translate("MainWindow", "开始采图"))
         self.imageCapture.setShortcut(_translate("MainWindow", "Ctrl+P"))
@@ -588,15 +588,16 @@ class Ui_MainWindow(object):
         self.function.setText(_translate("MainWindow", "功能&F"))
         self.actionzhuto.setText(_translate("MainWindow", "主题&T"))
         self.actionziti.setText(_translate("MainWindow", "字体&F"))
-
+    
     def capture_signal_slot(self, status):
         if status:
             self.img_capture_thread = CaptureThread(980, 720)
             self.img_capture_thread.capture_signal.connect(self.show_slot)
             self.img_capture_thread.start()
         else:
-            self.img_capture_thread.quit()
             self.img_capture_thread.cap.release()
-
+            self.img_capture_thread.quit()
+            self.label.setPixmap(QPixmap(r"./gui/images/welcome.jpg"))
+    
     def show_slot(self, image_pix):
         self.label.setPixmap(image_pix)
