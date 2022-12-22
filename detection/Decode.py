@@ -5,6 +5,11 @@ from pyzxing import *
 from .DecoderWithZxing import ZXQRcode
 
 
+class Decode:
+    def __init__(self):
+        zx = ZXQRcode()
+
+
 def decode_pyzxing(img, url):
     reader = BarCodeReader()
     results = reader.decode(url)

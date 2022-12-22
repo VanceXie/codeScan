@@ -87,6 +87,7 @@ class Ui_MainWindow(object):
         self.label.setPixmap(QPixmap(r"./gui/images/welcome.jpg"))
         self.label.setObjectName(u"label")
         self.label.setFrameShape(QFrame.Box)
+        self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout.addWidget(self.label)
         
         self.tableWidget = QtWidgets.QTableWidget(self.imageShow_table)
@@ -589,13 +590,13 @@ class Ui_MainWindow(object):
     
     def capture_signal_slot(self, status):
         if status:
-            self.img_capture_thread = CaptureThread(980, 720)
+            self.img_capture_thread = CaptureThread(800, 600)
             self.img_capture_thread.capture_signal.connect(self.show_slot)
             self.img_capture_thread.start()
         else:
             self.img_capture_thread.cap.release()
             self.img_capture_thread.quit()
-            self.label.setPixmap(QPixmap(r"./gui/images/welcome.jpg"))
+            self.label.setPixmap(QPixmap(r"./images/welcome.jpg"))
     
     def show_slot(self, image_pix):
         self.label.setPixmap(image_pix)
