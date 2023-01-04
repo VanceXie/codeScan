@@ -17,6 +17,7 @@ class CaptureThread(QThread):
         self.cap = cv2.VideoCapture(0)  # 读取视频或调用摄像头
         self.cap.set(3, width)
         self.cap.set(4, height)
+        self.decode = Decode()
     
     def setImageSize(self, width, height):
         self.cap.set(3, width)
@@ -28,7 +29,7 @@ class CaptureThread(QThread):
             ret, frame = self.cap.read()
             if ret:
                 img_captured = cv2.flip(frame, 1)
-                image = decode_zxing(img_captured)
+                image = self.decode.decode_zxing(img_captured)
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 image = QImage(image.data, image.shape[1], image.shape[0], QImage.Format_RGB888)
                 pix_image = QPixmap.fromImage(image)
