@@ -6,7 +6,7 @@ from PIL import Image
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap, QImage
 
-from detection.Decode import *
+from decoding.decode import *
 
 
 class CaptureThread(QThread):
@@ -35,7 +35,3 @@ class CaptureThread(QThread):
                 pix_image = QPixmap.fromImage(image)
                 self.capture_signal.emit(pix_image)
             # time.sleep(1000)
-
-
-class DecodeThread():
-    pass

@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pyzxing import *
 
-from .DecoderWithZxing import ZXQRcode
+from .zxingDecoder import ZXQRcode
 
 
 class Decode:

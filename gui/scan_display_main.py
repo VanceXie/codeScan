@@ -9,7 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFrame, QLabel
 
-from detection.logicalThread import *
+from decoding.decodeThread import *
 
 
 class Ui_MainWindow(object):
