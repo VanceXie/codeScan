@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # 读取图像
-image = cv2.imread("./4.tif")
+image = cv2.imread("pic/4.tif")
 
 # 灰度化
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

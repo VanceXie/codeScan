@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 # Load the image
-image = cv2.imread("./4.tif")
+image = cv2.imread("pic/4.tif")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # Perform edge detection

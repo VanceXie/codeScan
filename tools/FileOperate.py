@@ -28,5 +28,3 @@ def group_files_by_type(path):
     
     return files_by_type
 
-
-get_all_files(r'D:\Project\test')
