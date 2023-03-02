@@ -74,9 +74,9 @@ def template_match_multi(img, template, angle_step=30, scale_step=0.2, similarit
                 # 记录匹配的位置、相似度、角度和尺度
                 # matches.append([pt, result[pt[0], pt[1]], angle, scale])
                 if matches is None:
-                    matches = np.asarray([pt, result[pt[0], pt[1]], angle, scale])
+                    matches = np.asarray([pt, result[pt[0], pt[1]], angle, scale], dtype=object)
                 else:
-                    matches = np.vstack((matches, np.asarray([pt, result[pt[0], pt[1]], angle, scale])))
+                    matches = np.vstack((matches, np.asarray([pt, result[pt[0], pt[1]], angle, scale], dtype=object)))
     # 取出得分最高的检测框
     matches = matches[np.argsort(matches[:, 1])]
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
@@ -90,7 +90,7 @@ def template_match_multi(img, template, angle_step=30, scale_step=0.2, similarit
 
 
 # 读取目标图像和模板图像
-target_img = cv2.imread(r"pic/Over_008.png")
+target_img = cv2.imread(r"pic/4.tif")
 template_img = cv2.imread("pic/template.png")
 target_img = ImageOperate.img_equalize(target_img)
 img = template_match_multi(target_img, template_img, 180, 0.1, 0.99, 0.1)
