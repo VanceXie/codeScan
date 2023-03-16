@@ -99,7 +99,6 @@ cv2.imshow("Barcode Detection", img)
 if cv2.waitKey(0) == 27:
     cv2.destroyAllWindows()
 
-
 def detect_template(image, template, threshold=0.75, draw_result=True):  # '''基于特征提取的多目标旋转和尺度不变匹配'''
     
     # Convert images to grayscale
