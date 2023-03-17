@@ -5,11 +5,10 @@ import cv2
 import numpy as np
 
 # Load the image
-image = cv2.imread("pic/4.tif")
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+image = cv2.imread(r'D:\Project\codeScan\test_images\16.png', 0)
 
 # Perform edge detection
-edges = cv2.Canny(gray, 50, 150)
+edges = cv2.Canny(image, 50, 150)
 
 # Find lines in the image using HoughLinesP
 lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, minLineLength=100, maxLineGap=10)

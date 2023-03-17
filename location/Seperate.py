@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # 读入图像
-image = cv2.imread('barcode.jpg')
+image = cv2.imread(r'D:\Project\codeScan\test_images\16.png')
 
 # 转换为灰度图
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
