@@ -2,13 +2,13 @@
 import sys
 import time
 
-from PyQt5.QtCore import QThread, pyqtSignal, QDateTime
-from PyQt5.QtWidgets import QDialog, QLineEdit, QApplication
+from PyQt5.QtCore import QDateTime, QThread, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
 
 
 class BThread(QThread):
     update_signal = pyqtSignal(str)
-
+    
     def run(self) -> None:
         while True:
             date = QDateTime.currentDateTime()

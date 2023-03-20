@@ -18,21 +18,51 @@ def img_equalize(img):
     return bgr_clahe
 
 
+image = cv2.imread(r"D:\Project\codeScan\location\pic\Defect_035.png", -1)
+iamge_equalized = img_equalize(image)
+
+
 def sharpen(img):
     kernel = np.array([[-1, -1, -1],
                        [-1, 9, -1],
                        [-1, -1, -1]])
     
     # 应用锐化算子
-    sharpened = cv2.filter2D(img, -1, kernel)
-    return sharpened
+    sharpened = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=1, borderType=cv2.BORDER_CONSTANT)
+    sharpened_abs = cv2.convertScaleAbs(sharpened)
+    # sharpened_norm = cv2.normalize(sharpened_abs, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8UC1)
+    return sharpened_abs
+    
+    image = cv2.imread(r"D:\Project\codeScan\location\pic\Defect_035.png", 1)
+    sharpened_img = sharpen(image)
+    blured_img = cv2.GaussianBlur(sharpened_img, (5, 5), 0)
+    result = cv2.vconcat([image, sharpened_img, blured_img])
+    result_n = cv2.normalize(sharpened_img, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)
+    cv2.namedWindow('Image', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+    cv2.imshow('Image', result_n)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+# def CannyThreshold(lowThreshold):
+#     detected_edges = cv2.GaussianBlur(gray, (5, 5), 0)
+#     detected_edges = cv2.Canny(detected_edges, lowThreshold, lowThreshold * ratio, apertureSize=kernel_size)
+#     dst = cv2.bitwise_and(img, img, mask=detected_edges)
+#
+#     dst = np.concatenate([img, dst], 0)
+#     cv2.imshow('canny demo', dst)
 
 
-image = cv2.imread(r"D:\Project\codeScan\location\pic\template.png", 1)
-sharpened_img = sharpen(image)
-result = cv2.medianBlur(sharpened_img, 3)
-cv2.imshow('Original Image', image)
-cv2.imshow('Sharpened Image', sharpened_img)
-cv2.imshow('Filtered Image', result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# lowThreshold = 35
+# max_lowThreshold = 200
+# ratio = 3
+# kernel_size = 3
+#
+# img = cv2.imread('.\\Images\\Input\\02.jpg')
+# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#
+# cv2.namedWindow('canny demo')
+# cv2.createTrackbar('Min threshold', 'canny demo', lowThreshold, max_lowThreshold, CannyThreshold)
+#
+# CannyThreshold(lowThreshold)  # initialization
+# if cv2.waitKey(0) == 27:
+#     cv2.destroyAllWindows()
