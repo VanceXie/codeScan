@@ -18,8 +18,8 @@ def img_equalize(img):
     return bgr_clahe
 
 
-image = cv2.imread(r"D:\Project\codeScan\location\pic\Defect_035.png", -1)
-iamge_equalized = img_equalize(image)
+# image = cv2.imread(r"D:\Project\codeScan\location\pic\Defect_035.png", -1)
+# iamge_equalized = img_equalize(image)
 
 
 def sharpen(img):
