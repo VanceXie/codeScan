@@ -8,7 +8,7 @@ def img_equalize(img):
     # 将LAB色彩空间的L通道分离出来
     l, a, b = cv2.split(lab)
     # 创建CLAHE对象
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(12, 12))
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(15, 3))
     # 对L通道进行CLAHE均衡化
     l_clahe = clahe.apply(l)
     # 将CLAHE均衡化后的L通道合并回LAB色彩空间
@@ -18,9 +18,15 @@ def img_equalize(img):
     return bgr_clahe
 
 
-# image = cv2.imread(r"D:\Project\codeScan\location\pic\Defect_035.png", -1)
+# image = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_035.png", 1)
 # iamge_equalized = img_equalize(image)
-
+# gray = cv2.cvtColor(iamge_equalized, cv2.COLOR_BGR2GRAY)
+# _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+# cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
+# # Display the image
+# cv2.imshow("Barcode detection", thresh)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
 def sharpen(img):
     kernel = np.array([[-1, -1, -1],
