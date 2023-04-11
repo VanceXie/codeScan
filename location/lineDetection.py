@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+import os
 from math import sqrt
 
 import cv2
@@ -211,7 +212,7 @@ def find_barcode_4(img):
 	
 	# 先做形状筛选
 	# # Filter out contours with an aspect ratio greater than 4
-	aspect_ratio_filtered_contours = [contour for contour in filtered_contours if 6 > float(cv2.boundingRect(contour)[2]) / cv2.boundingRect(contour)[3] >= 3.5]  # 上述代码的列表推导式
+	aspect_ratio_filtered_contours = [contour for contour in filtered_contours if 6.5 > float(cv2.boundingRect(contour)[2]) / cv2.boundingRect(contour)[3] >= 3.5]  # 上述代码的列表推导式
 	
 	# 再做面积筛选
 	# Get the maximum contour area
@@ -233,28 +234,27 @@ def find_barcode_4(img):
 	return img
 
 
-# # Load the image
-# path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
-# for index, item in enumerate(os.listdir(path)):
-# 	file = os.path.join(path, item)
-# 	if os.path.isfile(file):
-# 		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
-# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# 		image = tools.ImageOperate.img_equalize(image)
-# 		result = find_barcode_4(image)
-# 		filename = os.path.splitext(item)
-# 		new_name = filename[0] + f'_{index}' + filename[-1]
-# 		result_path = os.path.join(path, 'result')
-# 		if not os.path.exists(result_path):
-# 			os.makedirs(result_path)
-# 		cv2.imwrite(os.path.join(result_path, new_name), result)
+# Load the image
+path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
+for index, item in enumerate(os.listdir(path)):
+	file = os.path.join(path, item)
+	if os.path.isfile(file):
+		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
+		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+		image = tools.ImageOperate.img_equalize(image)
+		result = find_barcode_4(image)
+		filename = os.path.splitext(item)
+		new_name = filename[0] + f'_{index}' + filename[-1]
+		result_path = os.path.join(path, 'result')
+		if not os.path.exists(result_path):
+			os.makedirs(result_path)
+		cv2.imwrite(os.path.join(result_path, new_name), result)
 
-
-image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\2.tif')
-image = tools.ImageOperate.img_equalize(image)
-result = find_barcode_4(image)
-cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
-# Display the image
-cv2.imshow("Barcode detection", result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\2.tif')
+# image = tools.ImageOperate.img_equalize(image)
+# result = find_barcode_4(image)
+# cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
+# # Display the image
+# cv2.imshow("Barcode detection", result)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
