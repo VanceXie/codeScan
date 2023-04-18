@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 import math
-import os
 
 import cv2
 import numpy as np
@@ -138,7 +137,7 @@ if cv2.waitKey(0) == 27:
 	cv2.destroyAllWindows()
 
 
-def detect_template(image, template, threshold=0.75, draw_result=True):  # '''基于特征提取的多目标旋转和尺度不变匹配'''
+def template_match_warpPerspective(image, template, threshold=0.75, draw_result=True):  # '''基于特征提取的多目标旋转和尺度不变匹配'''
 	
 	# Convert images to grayscale
 	gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -183,51 +182,3 @@ def detect_template(image, template, threshold=0.75, draw_result=True):  # '''�
 			cv2.rectangle(image, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
 	
 	return locations
-
-
-@PerformanceEval.calculate_time
-def template_match(template_image):
-	h, w = template_image.shape[:2]
-	methods = ['cv2.TM_SQDIFF_NORMED']
-	results = []
-	for meth in methods:
-		# img = target_img.copy()
-		
-		method = eval(meth)
-		for root, dirs, files in os.walk(r"D:\Project\test"):
-			for file in files:
-				img = cv2.imread(os.path.join(root, file))
-				
-				img_equalized = ImageOperate.img_equalize(img)
-				img_blur = cv2.medianBlur(img_equalized, 3)
-				res = cv2.matchTemplate(img_blur, template_image, method)
-				#
-				min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-				#
-				if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
-					#     threshold = 0.15
-					#     loc = np.where(res <= 0.15)
-					top_left = min_loc
-				else:
-					#     threshold = 0.85
-					#     loc = np.where(res >= 0.85)
-					top_left = max_loc
-				bottom_right = (top_left[0] + w, top_left[1] + h)
-				cv2.rectangle(img, top_left, bottom_right, (0, 255, 0), 2)
-				results.append(img)
-	return results
-# # for i in zip(*loc[::-1]):
-# #     cv2.rectangle(img, i, (i[0] + w, i[1] + h), (0, 255, 0), 2)
-# plt.subplot(121), plt.imshow(res, cmap='gray')
-# plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
-#
-# plt.subplot(122), plt.imshow(img, cmap='gray')
-# plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
-# plt.suptitle(meth)
-# plt.savefig('D:\\Project\\result\\2\\' + file.title() + meth + '.jpg',
-#             format='jpg', dpi=500, bbox_inches='tight')
-# # cv2.namedWindow("Barcode Detection", cv2.WINDOW_NORMAL)
-# # cv2.imshow("Barcode Detection", img_blur)
-# # if cv2.waitKey(0) == 27:
-# #     cv2.destroyAllWindows()
-# # plt.show()
