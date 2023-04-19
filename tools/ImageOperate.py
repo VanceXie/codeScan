@@ -18,16 +18,6 @@ def img_equalize(img):
 	return bgr_clahe
 
 
-# image = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_035.png", 1)
-# iamge_equalized = img_equalize(image)
-# gray = cv2.cvtColor(iamge_equalized, cv2.COLOR_BGR2GRAY)
-# _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-# cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
-# # Display the image
-# cv2.imshow("Barcode detection", thresh)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
 def sharpen(img):
 	kernel = np.array([[-1, -1, -1],
 					   [-1, 9, -1],
@@ -38,41 +28,8 @@ def sharpen(img):
 	sharpened_abs = cv2.convertScaleAbs(sharpened)
 	# sharpened_norm = cv2.normalize(sharpened_abs, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8UC1)
 	return sharpened_abs
-	
-	image = cv2.imread(r"D:\Project\codeScan\location\pic\Defect_035.png", 1)
-	sharpened_img = sharpen(image)
-	blured_img = cv2.GaussianBlur(sharpened_img, (5, 5), 0)
-	result = cv2.vconcat([image, sharpened_img, blured_img])
-	result_n = cv2.normalize(sharpened_img, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)
-	cv2.namedWindow('Image', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-	cv2.imshow('Image', result_n)
-	cv2.waitKey(0)
-	cv2.destroyAllWindows()
 
 
-# def CannyThreshold(lowThreshold):
-#     detected_edges = cv2.GaussianBlur(gray, (5, 5), 0)
-#     detected_edges = cv2.Canny(detected_edges, lowThreshold, lowThreshold * ratio, apertureSize=kernel_size)
-#     dst = cv2.bitwise_and(img, img, mask=detected_edges)
-#
-#     dst = np.concatenate([img, dst], 0)
-#     cv2.imshow('canny demo', dst)
-
-
-# lowThreshold = 35
-# max_lowThreshold = 200
-# ratio = 3
-# kernel_size = 3
-#
-# img = cv2.imread('.\\Images\\Input\\02.jpg')
-# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-#
-# cv2.namedWindow('canny demo')
-# cv2.createTrackbar('Min threshold', 'canny demo', lowThreshold, max_lowThreshold, CannyThreshold)
-#
-# CannyThreshold(lowThreshold)  # initialization
-# if cv2.waitKey(0) == 27:
-#     cv2.destroyAllWindows()
 def pyr_down(image, levels=3):
 	"""
 	:param image:
@@ -85,3 +42,8 @@ def pyr_down(image, levels=3):
 		image = cv2.pyrDown(image)
 		pyramid.append(image)
 	return pyramid
+
+
+image = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_035.png", 1)
+a = pyr_down(image)
+print('done')
