@@ -1,6 +1,4 @@
 # -*- coding: UTF-8 -*-
-import os
-from math import sqrt
 
 import cv2
 import numpy as np
@@ -9,30 +7,44 @@ import tools.ImageOperate
 from tools.PerformanceEval import calculate_time
 
 
-def find_barcode_1(img):
+# '''适用于条码比较清晰、直线比较明显的情况下。对于条码比较模糊、扭曲的情况可能不太适用'''
+def find_barcode_2(img):
 	"""
 	:param img: 'image as np.array'
 	:return: np.array(dtype=np.uint8)
 	"""
 	# Perform edge detection
-	edges = cv2.Canny(img, 50, 150)
+	edges = cv2.Canny(img, 35, 155)
 	
-	# Find lines in the image using HoughLinesP
-	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, minLineLength=100, maxLineGap=10)
-	
-	left, top, right, bottom = lines[0][0]
-	
-	# 找到和一维条码类似的直线
-	barcode_lines = []
-	# Draw lines on the image
+	# Find lines in the image using HoughLines
+	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 50, minLineLength=100, maxLineGap=2)
+	# Group lines by slope
+	groups = defaultdict(list)
 	for line in lines:
 		x1, y1, x2, y2 = line[0]
-		# 计算直线的夹角
-		cos = (x2 - x1) / sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
-		# 确定直线是否与一维条码相似
-		if abs(cos) > 0.8:
-			barcode_lines.append(line)
-			cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+		cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+		slope = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
+		groups[slope].append(line)
+	
+	# Find the group with the most lines
+	linemost = max(groups.values(), key=len)
+	
+	# Group lines by proximity
+	groups = {}
+	for line in linemost:
+		x1, y1, x2, y2 = line[0]
+		for key, value in groups.items():
+			if abs((y2 - y1) / (x2 - x1) - key) < 0.1:
+				value.append(line)
+				break
+		else:
+			groups[(y2 - y1) / (x2 - x1)] = [line]
+	
+	# Find bounding box of lines in group
+	left, top, right, bottom = np.inf, np.inf, 0, 0
+	for line in groups.values():
+		for l in line:
+			x1, y1, x2, y2 = l[0]
 			if x1 < left:
 				left = x1
 			if x2 < left:
@@ -49,59 +61,7 @@ def find_barcode_1(img):
 				bottom = y1
 			if y2 > bottom:
 				bottom = y2
-	
-	# Draw a rectangle around the barcode
-	cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255), 2)
-	return img
-
-
-# '''适用于条码比较清晰、直线比较明显的情况下。对于条码比较模糊、扭曲的情况可能不太适用'''
-def find_barcode_2(img):
-	"""
-	:param img: 'image as np.array'
-	:return: np.array(dtype=np.uint8)
-	"""
-	# 将图像转为灰度图
-	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	
-	# 边缘检测
-	edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-	
-	# 直线检测
-	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 50, minLineLength=50, maxLineGap=10)
-	
-	# 计算直线的斜率
-	slopes = []
-	for line in lines:
-		x1, y1, x2, y2 = line[0]
-		if x2 - x1 != 0:
-			slope = (y2 - y1) / (x2 - x1)
-			slopes.append(slope)
-	
-	# 找到最常见的斜率
-	mode_slope = max(set(slopes), key=slopes.count)
-	
-	# 计算直线的截距
-	intercepts = []
-	for line in lines:
-		x1, y1, x2, y2 = line[0]
-		if x2 - x1 != 0:
-			slope = (y2 - y1) / (x2 - x1)
-			intercept = y1 - slope * x1
-			intercepts.append(intercept)
-	
-	# 找到最常见的截距
-	mode_intercept = max(set(intercepts), key=intercepts.count)
-	
-	# 根据斜率和截距计算条码的位置
-	x1 = 0
-	y1 = mode_intercept
-	x2 = img.shape[1]
-	y2 = mode_slope * x2 + mode_intercept
-	
-	# 在图像上绘制条码位置
-	cv2.line(img, (x1, int(y1)), (x2, int(y2)), (0, 0, 255), 2)
-	cv2.rectangle(img, (x1, int(y1) - 10), (x2, int(y1) + 10), (0, 0, 255), -1)
+		cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255), 2)
 	
 	return img
 
@@ -234,27 +194,28 @@ def find_barcode_4(img):
 	return img
 
 
-# Load the image
-path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
-for index, item in enumerate(os.listdir(path)):
-	file = os.path.join(path, item)
-	if os.path.isfile(file):
-		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
-		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-		image = tools.ImageOperate.img_equalize(image)
-		result = find_barcode_4(image)
-		filename = os.path.splitext(item)
-		new_name = filename[0] + f'_{index}' + filename[-1]
-		result_path = os.path.join(path, 'result')
-		if not os.path.exists(result_path):
-			os.makedirs(result_path)
-		cv2.imwrite(os.path.join(result_path, new_name), result)
+# # Load the image
+# path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
+# for index, item in enumerate(os.listdir(path)):
+# 	file = os.path.join(path, item)
+# 	if os.path.isfile(file):
+# 		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
+# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# 		image = tools.ImageOperate.img_equalize(image)
+# 		result = find_barcode_4(image)
+# 		filename = os.path.splitext(item)
+# 		new_name = filename[0] + f'_{index}' + filename[-1]
+# 		result_path = os.path.join(path, 'result')
+# 		if not os.path.exists(result_path):
+# 			os.makedirs(result_path)
+# 		cv2.imwrite(os.path.join(result_path, new_name), result)
 
-# image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\2.tif')
-# image = tools.ImageOperate.img_equalize(image)
-# result = find_barcode_4(image)
-# cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
-# # Display the image
-# cv2.imshow("Barcode detection", result)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\2.tif')
+image = tools.ImageOperate.img_equalize(image)
+result = cv2.Canny(image, 100, 200, apertureSize=5)
+# result = find_barcode_1(image)
+cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
+# Display the image
+cv2.imshow("Barcode detection", result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

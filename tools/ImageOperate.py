@@ -30,20 +30,23 @@ def sharpen(img):
 	return sharpened_abs
 
 
-def pyr_down(image, levels=3):
+def pyr_down(image, pyr_levels=3):
 	"""
 	:param image:
-	:param levels:
+	:param pyr_levels:
 	:return:
 	"""
 	pyramid = [image]
-	for i in range(levels):
+	for i in range(pyr_levels):
 		# 降采样
 		image = cv2.pyrDown(image)
 		pyramid.append(image)
 	return pyramid
 
 
-image = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_035.png", 1)
-a = pyr_down(image)
-print('done')
+def get_location_original(location, pyr_levels):
+	if pyr_levels == 0:
+		return location
+	else:
+		location = location * 2 - 1
+		return get_location_original(location, pyr_levels - 1)
