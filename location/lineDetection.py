@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from collections import defaultdict
 
 import cv2
 import numpy as np
