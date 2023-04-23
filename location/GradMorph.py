@@ -1,120 +1,14 @@
 # -*- coding: UTF-8 -*-
-from collections import defaultdict
 
 import cv2
 import numpy as np
 
-import tools.ImageOperate
+from tools.ImageOperate import img_equalize
 from tools.PerformanceEval import calculate_time
 
 
-# '''适用于条码比较清晰、直线比较明显的情况下。对于条码比较模糊、扭曲的情况可能不太适用'''
-def find_barcode_2(img):
-	"""
-	:param img: 'image as np.array'
-	:return: np.array(dtype=np.uint8)
-	"""
-	# Perform edge detection
-	edges = cv2.Canny(img, 35, 155)
-	
-	# Find lines in the image using HoughLines
-	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 50, minLineLength=100, maxLineGap=2)
-	# Group lines by slope
-	groups = defaultdict(list)
-	for line in lines:
-		x1, y1, x2, y2 = line[0]
-		cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
-		slope = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
-		groups[slope].append(line)
-	
-	# Find the group with the most lines
-	linemost = max(groups.values(), key=len)
-	
-	# Group lines by proximity
-	groups = {}
-	for line in linemost:
-		x1, y1, x2, y2 = line[0]
-		for key, value in groups.items():
-			if abs((y2 - y1) / (x2 - x1) - key) < 0.1:
-				value.append(line)
-				break
-		else:
-			groups[(y2 - y1) / (x2 - x1)] = [line]
-	
-	# Find bounding box of lines in group
-	left, top, right, bottom = np.inf, np.inf, 0, 0
-	for line in groups.values():
-		for l in line:
-			x1, y1, x2, y2 = l[0]
-			if x1 < left:
-				left = x1
-			if x2 < left:
-				left = x2
-			if x1 > right:
-				right = x1
-			if x2 > right:
-				right = x2
-			if y1 < top:
-				top = y1
-			if y2 < top:
-				top = y2
-			if y1 > bottom:
-				bottom = y1
-			if y2 > bottom:
-				bottom = y2
-		cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255), 2)
-	
-	return img
-
-
 @calculate_time
-def find_barcode_3(img):
-	"""
-	:param img: 'image as np.array'
-	:return: np.array(dtype=np.uint8)
-	"""
-	# 转换为灰度图像
-	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	
-	# # 阈值处理
-	# thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)[1]
-	#
-	# # 形态学开操作
-	# kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-	# thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
-	# 边缘检测
-	edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-	# 直线检测
-	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, minLineLength=0, maxLineGap=3)
-	
-	# 筛选直线
-	filtered_lines = []
-	for line in lines:
-		x1, y1, x2, y2 = line[0]
-		angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
-		length = np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-		if length > 100 and abs(angle) < 10:
-			filtered_lines.append(line)
-	
-	# 绘制直线和标记区域
-	for line in lines:
-		x1, y1, x2, y2 = line[0]
-		cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), 1)
-	
-	filtered_lines_ndarray = np.asarray(filtered_lines, np.int32)
-	x = filtered_lines_ndarray.take([0, 2], 2)
-	y = filtered_lines_ndarray.take([1, 3], 2)
-	min_x = x.min()
-	max_x = x.max()
-	min_y = y.min()
-	max_y = y.max()
-	
-	cv2.rectangle(img, (min_x, min_y), (max_x, max_y), (0, 0, 255), 2)
-	return img
-
-
-@calculate_time
-def find_barcode_4(img):
+def find_barcode_by_diff(img):
 	# 灰度化
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	# Scharr算子检测x和y方向梯度
@@ -212,9 +106,8 @@ def find_barcode_4(img):
 # 		cv2.imwrite(os.path.join(result_path, new_name), result)
 
 image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\2.tif')
-image = tools.ImageOperate.img_equalize(image)
-result = cv2.Canny(image, 100, 200, apertureSize=5)
-# result = find_barcode_1(image)
+image = img_equalize(image)
+result = find_barcode_by_diff(image)
 cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
 # Display the image
 cv2.imshow("Barcode detection", result)
