@@ -2,6 +2,9 @@
 import os
 from collections import defaultdict
 
+import cv2
+import numpy as np
+
 from tools.PerformanceEval import calculate_time
 
 
@@ -49,3 +52,36 @@ def group_files_by_type(path, include_subdir: bool = False):
 		file_type = os.path.splitext(file)[-1].lower()  # 获取文件扩展名
 		files_by_type[file_type].append(file)
 	return files_by_type
+
+
+@calculate_time
+def get_template(height: int = None, width: int = 1200, bar_ratio: float = 5.0):
+	if bar_ratio is None and (height is None or width is None):
+		# ratio 为空且 height 或 width 中至少有一个为空时执行操作1
+		pass
+	elif bar_ratio is None:
+		# ratio 为空且 height、width 均不为空时执行操作2
+		h, w = height, width
+	elif height is None or width is None:
+		# ratio 不为空且 height 或 width 中至少有一个为空时执行操作3
+		if height is None:
+			# height 为空，width 不为空时执行操作4
+			h, w = int(width / bar_ratio), width
+		else:
+			# height 不为空，width 为空时执行操作5
+			h, w = height, height * bar_ratio
+	else:
+		# ratio 不为空且 height、width 均不为空时执行操作6
+		h, w = height, width
+	
+	# 创建一个wxh的灰度图像
+	img = np.ones((h, w), dtype=np.uint8) * 255
+	# 定义矩形区域的左上角和右下角坐标
+	pt1 = (int(0.08 * w), int(0.1 * h))
+	pt2 = (int(0.86 * w), int(0.92 * h))
+	# 在灰度图像上绘制矩形区域
+	cv2.rectangle(img, pt1, pt2, 0, -1)
+	# 显示生成的灰度图像
+	cv2.imshow("gray image", img)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()

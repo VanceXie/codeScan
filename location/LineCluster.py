@@ -5,7 +5,7 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
 
-from tools.ImageOperate import img_equalize
+from tools.ImageOperate import block_threshold, img_equalize
 from tools.PerformanceEval import calculate_time
 
 
@@ -73,35 +73,6 @@ def draw_clusters(img, clusters):
 		# 		bottom = y2
 		cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
 	return img
-
-
-@calculate_time
-def block_threshold(image, block_size=500):
-	# 计算图像大小
-	height, width = image.shape
-	
-	# 计算行列
-	rows = np.uint32(np.ceil(height / block_size))
-	cols = np.uint32(np.ceil(width / block_size))
-	final_image = np.zeros((height, width), dtype=np.uint8)
-	# 循环处理每个块
-	for r in range(rows):
-		for c in range(cols):
-			# 计算块的边界
-			row_start = r * block_size
-			col_start = c * block_size
-			row_end = min(row_start + block_size, height)
-			col_end = min(col_start + block_size, width)
-			
-			# 获取当前块的图像
-			current_block = image[row_start:row_end, col_start:col_end]
-			
-			# 计算块的阈值
-			thresh = cv2.threshold(current_block, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-			
-			# 将二值化后的块拼合起来
-			final_image[r * block_size:block_size * (r + 1), c * block_size:block_size * (c + 1)] = thresh
-	return final_image
 
 
 @calculate_time
