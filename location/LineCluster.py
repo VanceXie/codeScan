@@ -1,3 +1,4 @@
+import os
 from collections import defaultdict
 
 import cv2
@@ -5,7 +6,7 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
 
-from tools.ImageOperate import block_threshold, img_equalize
+from tools.ImageOperate import img_equalize
 from tools.PerformanceEval import calculate_time
 
 
@@ -42,36 +43,12 @@ def cluster_lines(lines, eps):
 def draw_clusters(img, clusters):
 	for label, lines in clusters.items():
 		color = np.random.randint(0, 255, (3,))
-		left = min([min(line[0][0], line[0][2]) for line in lines])
-		top = min([min(line[0][1], line[0][3]) for line in lines])
-		right = max([max(line[0][0], line[0][2]) for line in lines])
-		bottom = max([max(line[0][1], line[0][3]) for line in lines])
-		
 		for line in lines:
 			p1, p2 = line[0][:2], line[0][2:]
 			cv2.line(img, (p1[0], p1[1]), (p2[0], p2[1]), color.tolist(), 2)
-		# left, top, right, bottom = np.inf, np.inf, 0, 0
-		# for line in lines:
-		# 	p1, p2 = line[0][:2], line[0][2:]
-		# 	cv2.line(img, (p1[0], p1[1]), (p2[0], p2[1]), color.tolist(), 2)
-		# 	x1, y1, x2, y2 = line[0]
-		# 	if x1 < left:
-		# 		left = x1
-		# 	if x2 < left:
-		# 		left = x2
-		# 	if x1 > right:
-		# 		right = x1
-		# 	if x2 > right:
-		# 		right = x2
-		# 	if y1 < top:
-		# 		top = y1
-		# 	if y2 < top:
-		# 		top = y2
-		# 	if y1 > bottom:
-		# 		bottom = y1
-		# 	if y2 > bottom:
-		# 		bottom = y2
-		cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+		
+		contours = np.asarray(lines).reshape(-1, 2)
+		cv2.drawContours(img, [np.int0(cv2.boxPoints(cv2.minAreaRect(contours)))], 0, (0, 0, 255), 2)
 	return img
 
 
@@ -82,9 +59,9 @@ def find_barcode_by_cluster(img):
 	:return: np.array(dtype=np.uint8)
 	"""
 	# Perform edge detection
-	edges = cv2.Canny(img, 250, 255)
+	edges = cv2.Canny(img, 200, 255)
 	# Find lines in the image using HoughLines
-	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 10, minLineLength=10, maxLineGap=3)
+	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 5, minLineLength=10, maxLineGap=2)
 	# Group lines by slope
 	groups = defaultdict(list)
 	for line in lines:
@@ -99,13 +76,27 @@ def find_barcode_by_cluster(img):
 	return clusters
 
 
-image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_024.png')
-image = img_equalize(image)
-img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-block_image = block_threshold(img_gray)
-clusters = find_barcode_by_cluster(image)
-image = draw_clusters(image, clusters)
-cv2.namedWindow('canny demo', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-cv2.imshow('canny demo', image)
-if cv2.waitKey(0) == 27:
-	cv2.destroyAllWindows()
+# Load the image
+path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
+for index, item in enumerate(os.listdir(path)):
+	file = os.path.join(path, item)
+	if os.path.isfile(file):
+		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+		image = img_equalize(image)
+		clusters = find_barcode_by_cluster(image)
+		image = draw_clusters(image, clusters)
+		filename = os.path.splitext(item)
+		new_name = filename[0] + f'_{index}' + filename[-1]
+		result_path = os.path.join(path, 'result_LineCluster')
+		if not os.path.exists(result_path):
+			os.makedirs(result_path)
+		cv2.imwrite(os.path.join(result_path, new_name), image)
+
+# image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\13.tif')
+# image = img_equalize(image)
+# clusters = find_barcode_by_cluster(image)
+# image = draw_clusters(image, clusters)
+# cv2.namedWindow('canny demo', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+# cv2.imshow('canny demo', image)
+# if cv2.waitKey(0) == 27:
+# 	cv2.destroyAllWindows()

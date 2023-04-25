@@ -10,7 +10,7 @@ def img_equalize(image_rgb):
 	# 将LAB色彩空间的L通道分离出来
 	l, a, b = cv2.split(lab)
 	# 创建CLAHE对象
-	clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(15, 3))
+	clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(3, 15))
 	# 对L通道进行CLAHE均衡化
 	l_clahe = clahe.apply(l)
 	# 将CLAHE均衡化后的L通道合并回LAB色彩空间

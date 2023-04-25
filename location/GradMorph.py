@@ -100,7 +100,7 @@ def find_barcode_by_diff(img):
 # 		result = find_barcode_4(image)
 # 		filename = os.path.splitext(item)
 # 		new_name = filename[0] + f'_{index}' + filename[-1]
-# 		result_path = os.path.join(path, 'result')
+# 		result_path = os.path.join(path, 'result_GradMorph')
 # 		if not os.path.exists(result_path):
 # 			os.makedirs(result_path)
 # 		cv2.imwrite(os.path.join(result_path, new_name), result)
