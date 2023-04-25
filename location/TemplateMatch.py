@@ -4,7 +4,7 @@ import math
 import cv2
 import numpy as np
 
-from tools.ImageOperate import block_threshold, img_equalize
+from tools.ImageOperate import img_equalize
 from tools.PerformanceEval import calculate_time
 
 
@@ -48,8 +48,8 @@ def rotate_and_scale(image, angle, scale):
 
 
 @calculate_time
-def template_match_multi(image, template, angle_step: int = 180, scale_start: float = 0.7, scale_stop: float = 1.3, scale_step: float = 0.2, similarity_threshold: float = 1.0, \
-						 overlap_threshold=0.3):
+def template_match_multi(source_img, image, template, angle_step: int = 180, scale_start: float = 0.7, scale_stop: float = 1.3, scale_step: float = 0.2, similarity_threshold: float = 1.0, \
+						 overlap_threshold=0.5):
 	"""
 	:param image:
 	:param template:
@@ -84,25 +84,29 @@ def template_match_multi(image, template, angle_step: int = 180, scale_start: fl
 	
 	# 取出得分最高的检测框
 	max_loc = matches[0][0]
-	cv2.rectangle(image, (max_loc[1], max_loc[0]), (max_loc[1] + tw, max_loc[0] + th), (0, 0, 255), 2)
+	cv2.rectangle(source_img, (max_loc[1], max_loc[0]), (max_loc[1] + tw, max_loc[0] + th), (0, 255, 0), 2)
 	
 	# 遍历matches列表，画出符合重叠度要求的检测框
 	for match in matches:
 		pt = match[0]
 		overlap = compute_overlap(max_loc[1], max_loc[0], tw, th, pt[1], pt[0], tw, th)
 		if overlap <= overlap_threshold:
-			cv2.rectangle(image, (pt[1], pt[0]), (pt[1] + tw, pt[0] + th), (0, 0, 255), 2)
+			cv2.rectangle(source_img, (pt[1], pt[0]), (pt[1] + tw, pt[0] + th), (0, 0, 255), 2)
 	
-	return image
+	return source_img
 
 
 # 读取目标图像和模板图像
-target_img = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_008.png")
+source_img = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_008.png")
+# 生成和原图一样高度和宽度的矩形（全为0）
+target_img = np.zeros(source_img.shape, np.uint8)
+cv2.copyTo(source_img, mask=None, dst=target_img)
+
 template_img = cv2.imread(r"C:\Users\fy.xie\Desktop\template.png", 0)
 target_img = img_equalize(target_img)
 img_gray = cv2.cvtColor(target_img, cv2.COLOR_BGR2GRAY)
-block_image = block_threshold(img_gray)
-img = template_match_multi(block_image, template_img, 180, 0.7, 1.3, 0.2, 1.0, 0.3)
+# block_image = block_threshold(img_gray)
+img = template_match_multi(source_img, img_gray, template_img, 180, 0.7, 1.3, 0.2, 1.0, 0.3)
 # img,_ = template_match_sift(target_img, template_img)
 cv2.namedWindow("Barcode Detection", cv2.WINDOW_NORMAL)
 

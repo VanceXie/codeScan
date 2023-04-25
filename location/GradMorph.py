@@ -105,7 +105,7 @@ def find_barcode_by_diff(img):
 # 			os.makedirs(result_path)
 # 		cv2.imwrite(os.path.join(result_path, new_name), result)
 
-image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\2.tif')
+image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\13.tif')
 image = img_equalize(image)
 result = find_barcode_by_diff(image)
 cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)

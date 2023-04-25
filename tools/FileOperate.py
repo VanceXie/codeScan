@@ -80,8 +80,9 @@ def get_template(height: int = None, width: int = 1200, bar_ratio: float = 5.0):
 	pt1 = (int(0.08 * w), int(0.1 * h))
 	pt2 = (int(0.86 * w), int(0.92 * h))
 	# 在灰度图像上绘制矩形区域
-	cv2.rectangle(img, pt1, pt2, 0, -1)
+	cv2.rectangle(img, pt1, pt2, 127, -1)
 	# 显示生成的灰度图像
 	cv2.imshow("gray image", img)
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
+# get_template()
