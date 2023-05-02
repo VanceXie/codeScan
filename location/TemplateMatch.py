@@ -48,9 +48,10 @@ def rotate_and_scale(image, angle, scale):
 
 
 @calculate_time
-def template_match_multi(source_img, image, template, angle_step: int = 180, scale_start: float = 0.7, scale_stop: float = 1.3, scale_step: float = 0.2, similarity_threshold: float = 1.0, \
+def template_match_multi(source_img, image, template, angle_step: int = 180, scale_start: float = 0.7, scale_stop: float = 1.3, scale_step: float = 0.2, similarity_threshold: float = 1.0,
 						 overlap_threshold=0.5):
 	"""
+	:param source_img:
 	:param image:
 	:param template:
 	:param angle_step: 旋转步长
