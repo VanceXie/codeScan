@@ -1,4 +1,3 @@
-import os
 from collections import defaultdict
 
 import cv2
@@ -44,11 +43,11 @@ def draw_clusters(img, clusters):
 	for label, lines in clusters.items():
 		color = np.random.randint(0, 255, (3,))
 		for line in lines:
-			p1, p2 = line[0][:2], line[0][2:]
-			cv2.line(img, (p1[0], p1[1]), (p2[0], p2[1]), color.tolist(), 2)
+			p1, p2 = line[0][:2].astype(int), line[0][2:].astype(int)
+			cv2.line(img, (p1[0], p1[1]), (p2[0], p2[1]), color.tolist(), 1)
 		
 		contours = np.asarray(lines).reshape(-1, 2)
-		cv2.drawContours(img, [np.int0(cv2.boxPoints(cv2.minAreaRect(contours)))], 0, (0, 0, 255), 2)
+		cv2.drawContours(img, [np.int0(cv2.boxPoints(cv2.minAreaRect(contours)))], 0, (0, 255, 0), 2)
 	return img
 
 
@@ -59,13 +58,22 @@ def find_barcode_by_cluster(img):
 	:return: np.array(dtype=np.uint8)
 	"""
 	# Perform edge detection
-	edges = cv2.Canny(img, 200, 255)
-	# Find lines in the image using HoughLines
-	lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 5, minLineLength=10, maxLineGap=2)
+	# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	edges = cv2.Canny(img, 180, 255)
+	
+	# # Find lines in the image using HoughLines,霍夫变换对于较短且密集的线段检测效果不好
+	# lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 5, minLineLength=10, maxLineGap=2)
+	
+	# 创建线段检测器
+	lsd = cv2.createLineSegmentDetector()
+	
+	# 检测直线段
+	lines, width, prec, nfa = lsd.detect(edges)
+	
 	# Group lines by slope
 	groups = defaultdict(list)
 	for line in lines:
-		x1, y1, x2, y2 = line[0]
+		x1, y1, x2, y2 = line[0].astype(int)
 		cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 1)
 		slope = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
 		groups[slope].append(line)
@@ -76,27 +84,32 @@ def find_barcode_by_cluster(img):
 	return clusters
 
 
-# Load the image
-path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
-for index, item in enumerate(os.listdir(path)):
-	file = os.path.join(path, item)
-	if os.path.isfile(file):
-		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-		image = img_equalize(image)
-		clusters = find_barcode_by_cluster(image)
-		image = draw_clusters(image, clusters)
-		filename = os.path.splitext(item)
-		new_name = filename[0] + f'_{index}' + filename[-1]
-		result_path = os.path.join(path, 'result_LineCluster')
-		if not os.path.exists(result_path):
-			os.makedirs(result_path)
-		cv2.imwrite(os.path.join(result_path, new_name), image)
+# # Load the image
+# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG'
+# for index, item in enumerate(os.listdir(path)):
+# 	file = os.path.join(path, item)
+# 	if os.path.isfile(file):
+# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# 		image = img_equalize(image)
+# 		try:
+# 			clusters = find_barcode_by_cluster(image)
+# 			image = draw_clusters(image, clusters)
+# 		except:
+# 			pass
+# 		finally:
+# 			filename = os.path.splitext(item)
+# 			new_name = filename[0] + f'_{index}' + filename[-1]
+# 			result_path = os.path.join(path, 'result_LineCluster')
+# 			if not os.path.exists(result_path):
+# 				os.makedirs(result_path)
+# 			cv2.imwrite(os.path.join(result_path, new_name), image)
+# print('finished!')
 
-# image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\13.tif')
-# image = img_equalize(image)
-# clusters = find_barcode_by_cluster(image)
-# image = draw_clusters(image, clusters)
-# cv2.namedWindow('canny demo', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-# cv2.imshow('canny demo', image)
-# if cv2.waitKey(0) == 27:
-# 	cv2.destroyAllWindows()
+image = cv2.imread(r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG\0211111226_NG_BarCode_Camera3_0211111226.jpg")
+image = img_equalize(image)
+clusters = find_barcode_by_cluster(image)
+image = draw_clusters(image, clusters)
+cv2.namedWindow('canny demo', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+cv2.imshow('canny demo', image)
+if cv2.waitKey(0) == 27:
+	cv2.destroyAllWindows()

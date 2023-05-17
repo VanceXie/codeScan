@@ -53,17 +53,6 @@ def find_barcode_by_diff(img):
 	# 查找轮廓并筛选面积最大的轮廓
 	contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 	filtered_contours = [contours[i] for i in range(len(contours)) if hierarchy[0][i][3] == -1]
-	# cv2.drawContours(image, contours, -1, (0, 0, 255), 1)
-	# max_area = 0
-	# best_cnt = None
-	# for cnt in contours:
-	# 	x, y, w, h = cv2.boundingRect(cnt)
-	# 	aspect_ratio = float(w) / h
-	# 	if aspect_ratio > 3:
-	# 		area = cv2.contourArea(cnt)
-	# 		if area > max_area:
-	# 			max_area = area
-	# 			best_cnt = cnt
 	
 	# 先做形状筛选
 	# # Filter out contours with an aspect ratio greater than 4
@@ -90,22 +79,23 @@ def find_barcode_by_diff(img):
 
 
 # # Load the image
-# path = r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1'
+# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG'
 # for index, item in enumerate(os.listdir(path)):
 # 	file = os.path.join(path, item)
 # 	if os.path.isfile(file):
 # 		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
 # 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# 		image = tools.ImageOperate.img_equalize(image)
-# 		result = find_barcode_4(image)
+# 		image = img_equalize(image)
+# 		result = find_barcode_by_diff(image)
 # 		filename = os.path.splitext(item)
 # 		new_name = filename[0] + f'_{index}' + filename[-1]
 # 		result_path = os.path.join(path, 'result_GradMorph')
 # 		if not os.path.exists(result_path):
 # 			os.makedirs(result_path)
 # 		cv2.imwrite(os.path.join(result_path, new_name), result)
+# print('finished!')
 
-image = cv2.imread(r'D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\13.tif')
+image = cv2.imread(r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG\result_GradMorph\0211095815_NG_BarCode_Camera3_0211095815_0.jpg")
 image = img_equalize(image)
 result = find_barcode_by_diff(image)
 cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
