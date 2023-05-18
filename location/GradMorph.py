@@ -86,16 +86,21 @@ def find_barcode_by_diff(img):
 # 		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
 # 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 # 		image = img_equalize(image)
-# 		result = find_barcode_by_diff(image)
-# 		filename = os.path.splitext(item)
-# 		new_name = filename[0] + f'_{index}' + filename[-1]
-# 		result_path = os.path.join(path, 'result_GradMorph')
-# 		if not os.path.exists(result_path):
-# 			os.makedirs(result_path)
-# 		cv2.imwrite(os.path.join(result_path, new_name), result)
+# 		try:
+# 			result = find_barcode_by_diff(image)
+# 		except:
+# 			pass
+# 		finally:
+# 			filename = os.path.splitext(item)
+# 			new_name = filename[0] + filename[-1]
+# 			result_path = os.path.join(path, 'result_GradMorph')
+# 			if not os.path.exists(result_path):
+# 				os.makedirs(result_path)
+# 			cv2.imwrite(os.path.join(result_path, new_name), result)
 # print('finished!')
 
-image = cv2.imread(r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG\result_GradMorph\0211095815_NG_BarCode_Camera3_0211095815_0.jpg")
+file = r"D:\Fenkx\Fenkx - General\Ubei\221212 AUO扫码Scan问题点\扫码带星号,二维码检出断帧\Over_014_二维码断帧过检.jpg"
+image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 image = img_equalize(image)
 result = find_barcode_by_diff(image)
 cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)

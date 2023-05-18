@@ -6,6 +6,10 @@ from tools.PerformanceEval import calculate_time
 
 
 def img_equalize(image_rgb):
+	"""
+	:param image_rgb:
+	:return:
+	"""
 	lab = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2LAB)
 	# 将LAB色彩空间的L通道分离出来
 	l, a, b = cv2.split(lab)

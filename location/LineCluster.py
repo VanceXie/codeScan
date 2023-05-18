@@ -1,3 +1,4 @@
+import os
 from collections import defaultdict
 
 import cv2
@@ -34,7 +35,7 @@ def cluster_lines(lines, eps):
 	for i, label in enumerate(labels):
 		clusters[label].append(lines[i])
 	max_length = max(len(v) for v in clusters.values())
-	clusters_new = {key: value for key, value in clusters.items() if len(value) >= 0.4 * max_length}
+	clusters_new = {key: value for key, value in clusters.items() if len(value) >= 0.75 * max_length}
 	return clusters_new
 
 
@@ -47,6 +48,7 @@ def draw_clusters(img, clusters):
 			cv2.line(img, (p1[0], p1[1]), (p2[0], p2[1]), color.tolist(), 1)
 		
 		contours = np.asarray(lines).reshape(-1, 2)
+		
 		cv2.drawContours(img, [np.int0(cv2.boxPoints(cv2.minAreaRect(contours)))], 0, (0, 255, 0), 2)
 	return img
 
@@ -59,8 +61,7 @@ def find_barcode_by_cluster(img):
 	"""
 	# Perform edge detection
 	# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	edges = cv2.Canny(img, 180, 255)
-	
+	edges = cv2.Canny(img, 80, 255)
 	# # Find lines in the image using HoughLines,霍夫变换对于较短且密集的线段检测效果不好
 	# lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 5, minLineLength=10, maxLineGap=2)
 	
@@ -74,42 +75,42 @@ def find_barcode_by_cluster(img):
 	groups = defaultdict(list)
 	for line in lines:
 		x1, y1, x2, y2 = line[0].astype(int)
-		cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 1)
+		# cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 1)
 		slope = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
 		groups[slope].append(line)
 	
 	# Find the group with the most lines
 	linemost = max(groups.values(), key=len)
-	clusters = cluster_lines(linemost, eps=100)
+	clusters = cluster_lines(linemost, eps=80)
 	return clusters
 
 
-# # Load the image
-# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG'
-# for index, item in enumerate(os.listdir(path)):
-# 	file = os.path.join(path, item)
-# 	if os.path.isfile(file):
-# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# 		image = img_equalize(image)
-# 		try:
-# 			clusters = find_barcode_by_cluster(image)
-# 			image = draw_clusters(image, clusters)
-# 		except:
-# 			pass
-# 		finally:
-# 			filename = os.path.splitext(item)
-# 			new_name = filename[0] + f'_{index}' + filename[-1]
-# 			result_path = os.path.join(path, 'result_LineCluster')
-# 			if not os.path.exists(result_path):
-# 				os.makedirs(result_path)
-# 			cv2.imwrite(os.path.join(result_path, new_name), image)
-# print('finished!')
+# Load the image
+path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
+for index, item in enumerate(os.listdir(path)):
+	file = os.path.join(path, item)
+	if os.path.isfile(file):
+		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+		image = img_equalize(image)
+		try:
+			clusters = find_barcode_by_cluster(image)
+			image = draw_clusters(image, clusters)
+		finally:
+			filename = os.path.splitext(item)
+			new_name = filename[0] + filename[-1]
+			result_path = os.path.join(path, 'result_LineCluster')
+			if not os.path.exists(result_path):
+				os.makedirs(result_path)
+			cv2.imwrite(os.path.join(result_path, new_name), image)
+print('finished!')
 
-image = cv2.imread(r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG\0211111226_NG_BarCode_Camera3_0211111226.jpg")
-image = img_equalize(image)
-clusters = find_barcode_by_cluster(image)
-image = draw_clusters(image, clusters)
-cv2.namedWindow('canny demo', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-cv2.imshow('canny demo', image)
-if cv2.waitKey(0) == 27:
-	cv2.destroyAllWindows()
+# file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG\0211113249_NG_BarCode_Camera3_0211113250.jpg"
+# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# image_equalized = img_equalize(image_source)
+# # image_equalized2 = cv2.normalize(image_equalized, None, 0, 255, norm_type=cv2.NORM_MINMAX)
+# clusters = find_barcode_by_cluster(image_equalized)
+# image_drawed = draw_clusters(image_source, clusters)
+# cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+# cv2.imshow('result', image_source)
+# if cv2.waitKey(0) == 27:
+# 	cv2.destroyAllWindows()
