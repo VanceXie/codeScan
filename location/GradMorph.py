@@ -99,7 +99,7 @@ def find_barcode_by_diff(img):
 # 			cv2.imwrite(os.path.join(result_path, new_name), result)
 # print('finished!')
 
-file = r"D:\Fenkx\Fenkx - General\Ubei\221212 AUO扫码Scan问题点\扫码带星号,二维码检出断帧\Over_014_二维码断帧过检.jpg"
+file = r"C:\Users\fy.xie\Desktop\Remap Image_screenshot_19.05.2023.png"
 image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 image = img_equalize(image)
 result = find_barcode_by_diff(image)
