@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.stats import norm
+from sympy import S, diff, solveset, symbols
 
 from tools.PerformanceEval import calculate_time
 
@@ -89,19 +90,49 @@ def block_threshold(image, block_size=500):
 	return final_image
 
 
+@calculate_time
+def get_threshold(hist):
+	# 计算直方图高度变化
+	# 定义四阶多项式函数
+	def func(x, popt, exponent_max):
+		X = np.vander(x, exponent_max + 1, increasing=True)  # 生成x的多个幂次的ndarray，从左到右，分别为[x^0,x^1,x^2...]
+		f = np.dot(X, popt[::-1])  # 拟合所得原始参数是从高幂到低幂的系数，所以做一次翻转操作
+		# # 获取求导后的系数
+		# exponents = np.arange(exponent_max, 0, -1)
+		# arr1 = exponents[:-2]
+		# arr2 = exponents[1:-1]
+		# arr3 = exponents[2:]
+		# result = arr1 * arr2 * arr3
+		# d3_f = np.dot(X[:, :exponent_max - 2], popt_reverse[3:] * result[::-1])
+		return f
+	
+	def fit_func(x, coeffs):
+		f = np.polyval(coeffs, x)
+		return f
+	
+	# 生成样本数据
+	xdata = np.arange(256.0)
+	
+	exponent = 6
+	popt = np.polyfit(xdata, hist, exponent)
+	
+	x = symbols('x')
+	d2_fit_func = diff(fit_func(x, popt), x, 2)
+	solution = np.asarray(list(solveset(d2_fit_func, x, domain=S.Reals)))
+	return int(solution[(solution >= 0) & (solution <= 255)][-1])
+
+
+@calculate_time
 def hist_cut(img):
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	# 计算灰度直方图
 	hist, bins = np.histogram(gray.flatten(), 256, [0, 256])
+	# hist = np.bincount(gray.flatten())
 	# 去除灰度值最高且占比较少的的几个直方图
-	
-	img_cutted = np.copy(img)
-	# 计算直方图高度变化
-	diff = np.diff(hist)
-	index = np.where(np.abs(diff) > 500)[0][-1]
+	image_cut = np.copy(img)
+	threshold = get_threshold(hist)
 	# 截断之前的大灰度值像素
-	img_cutted[img_cutted > index] = 0
-	image_eq = img_equalize(img_cutted)
+	image_cut[image_cut > threshold] = 0
 	# 绘制原始灰度直方图
 	plt.subplot(1, 2, 1)
 	plt.hist(gray.ravel(), 256, [0, 256], color='r')
@@ -111,16 +142,18 @@ def hist_cut(img):
 	plt.title('Original Histogram')
 	# 绘制去除部分直方图后的灰度直方图
 	plt.subplot(1, 2, 2)
-	plt.hist(image_eq.ravel(), 256, [0, 256], color='g')
+	plt.hist(image_cut.ravel(), 256, [0, 256], color='g')
 	plt.xlim([0, 256])
 	plt.xlabel('Gray Level')
 	plt.ylabel('Normalized Number of Pixels')
 	plt.title('cutted Histogram')
 	plt.show()
-	# 显示去除部分直方图的图像
-	cv2.imshow('Removed Image', image_eq)
-	cv2.waitKey(0)
-	cv2.destroyAllWindows()
+
+
+# 显示去除部分直方图的图像
+# cv2.imshow('Removed Image', image_cut)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
 
 # return img_cutted
@@ -166,9 +199,9 @@ def hist_remap(img):
 	return remap_img
 
 
-file = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\0211111238_NG_BarCode_Camera3_0211111238.jpg'
+file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\Over_004.png"
 image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-img_cutted = hist_cut(image_source)
+hist_cut(image_source)
 # image_eq = img_equalize(img_cutted)
 # cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
 # cv2.imshow('result', cv2.vconcat((img_cutted, image_eq)))
