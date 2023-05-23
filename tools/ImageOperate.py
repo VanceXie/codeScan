@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -113,12 +114,16 @@ def get_threshold(hist):
 	# 生成样本数据
 	xdata = np.arange(256.0)
 	
-	exponent = 6
+	exponent = 5
 	popt = np.polyfit(xdata, hist, exponent)
 	
 	x = symbols('x')
 	d2_fit_func = diff(fit_func(x, popt), x, 2)
 	solution = np.asarray(list(solveset(d2_fit_func, x, domain=S.Reals)))
+	print(solution)
+	plt.bar(xdata, hist)
+	plt.plot(xdata, fit_func(xdata, popt), color='r')
+	plt.show()
 	
 	return int(solution[(solution >= 0) & (solution <= 255)][-1])
 
@@ -130,10 +135,9 @@ def hist_cut(img):
 	hist, bins = np.histogram(gray.flatten(), 256, [0, 256])
 	# hist = np.bincount(gray.flatten())
 	# 去除灰度值最高且占比较少的的几个直方图
-	image_cut = np.copy(img)
 	threshold = get_threshold(hist)
 	# 截断之前的大灰度值像素
-	image_cut[image_cut > threshold] = 0
+	img[img > threshold] = 0
 	# 绘制原始灰度直方图
 	plt.subplot(1, 2, 1)
 	plt.hist(gray.ravel(), 256, [0, 256], color='r')
@@ -143,21 +147,17 @@ def hist_cut(img):
 	plt.title('Original Histogram')
 	# 绘制去除部分直方图后的灰度直方图
 	plt.subplot(1, 2, 2)
-	plt.hist(image_cut.ravel(), 256, [0, 256], color='g')
+	plt.hist(img.ravel(), 256, [0, 256], color='g')
 	plt.xlim([0, 256])
 	plt.xlabel('Gray Level')
 	plt.ylabel('Normalized Number of Pixels')
 	plt.title('cutted Histogram')
 	plt.show()
-
-
-# 显示去除部分直方图的图像
-# cv2.imshow('Removed Image', image_cut)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-
-# return img_cutted
+	# 显示去除部分直方图的图像
+	cv2.imshow('Removed Image', img)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+	return img
 
 
 def hist_remap(img):
@@ -200,9 +200,27 @@ def hist_remap(img):
 	return remap_img
 
 
-file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\Over_004.png"
+# # Load the image
+# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
+# for index, item in enumerate(os.listdir(path)):
+# 	file = os.path.join(path, item)
+# 	if os.path.isfile(file):
+# 		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# 		try:
+# 			image_cut=hist_cut(image_source)
+# 		finally:
+# 			filename = os.path.splitext(item)
+# 			new_name = filename[0] + filename[-1]
+# 			result_path = os.path.join(path, 'image_cut')
+# 			if not os.path.exists(result_path):
+# 				os.makedirs(result_path)
+# 			cv2.imwrite(os.path.join(result_path, new_name), image_cut)
+# print('finished!')
+
+file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\image_cut\16.png"
 image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-hist_cut(image_source)
+image_cut = hist_cut(image_source)
+
 # image_eq = img_equalize(img_cutted)
 # cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
 # cv2.imshow('result', cv2.vconcat((img_cutted, image_eq)))
