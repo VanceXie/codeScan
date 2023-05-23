@@ -119,6 +119,7 @@ def get_threshold(hist):
 	x = symbols('x')
 	d2_fit_func = diff(fit_func(x, popt), x, 2)
 	solution = np.asarray(list(solveset(d2_fit_func, x, domain=S.Reals)))
+	
 	return int(solution[(solution >= 0) & (solution <= 255)][-1])
 
 
