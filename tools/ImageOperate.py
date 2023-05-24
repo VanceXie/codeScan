@@ -91,20 +91,26 @@ def block_threshold(image, block_size=500):
 	return final_image
 
 
-@calculate_time
-def get_threshold(hist):
-	# 计算直方图高度变化
-	# 定义四阶多项式函数
-	def func(x, popt, exponent_max):
-		X = np.vander(x, exponent_max + 1, increasing=True)  # 生成x的多个幂次的ndarray，从左到右，分别为[x^0,x^1,x^2...]
-		f = np.dot(X, popt[::-1])  # 拟合所得原始参数是从高幂到低幂的系数，所以做一次翻转操作
+def get_threshold_by_convexity(hist, exponent):
+	"""
+	（效果不佳，弃用）根据直方图拟合曲线的凹凸性确定阈值
+	:param hist: 根据图片计算出的灰度直方图
+	:param exponent: 拟合曲线的阶数
+	:return: 0-255 范围内最右侧第一个凹凸性变化点
+	"""
+	
+	# 定义多项式函数
+	def func(variable, coefficients, exponent_max):
+		X = np.vander(variable, exponent_max + 1, increasing=True)  # 生成x的多个幂次的ndarray，从左到右，分别为[x^0,x^1,x^2...]
+		
+		f = np.dot(X, coefficients[::-1])  # 拟合所得原始参数是从高幂到低幂的系数，所以做一次翻转操作
 		# # 获取求导后的系数
 		# exponents = np.arange(exponent_max, 0, -1)
 		# arr1 = exponents[:-2]
 		# arr2 = exponents[1:-1]
 		# arr3 = exponents[2:]
 		# result = arr1 * arr2 * arr3
-		# d3_f = np.dot(X[:, :exponent_max - 2], popt_reverse[3:] * result[::-1])
+		# d3_f = np.dot(X[:, :exponent_max - 2], coefficients[::-1][3:] * result[::-1])
 		return f
 	
 	def fit_func(x, coeffs):
@@ -114,7 +120,6 @@ def get_threshold(hist):
 	# 生成样本数据
 	xdata = np.arange(256.0)
 	
-	exponent = 5
 	popt = np.polyfit(xdata, hist, exponent)
 	
 	x = symbols('x')
@@ -135,9 +140,13 @@ def hist_cut(img):
 	hist, bins = np.histogram(gray.flatten(), 256, [0, 256])
 	# hist = np.bincount(gray.flatten())
 	# 去除灰度值最高且占比较少的的几个直方图
-	threshold = get_threshold(hist)
+	threshold = get_threshold_by_convexity(hist)
+	# 计算直方图高度变化
+	diff = np.diff(hist)
+	index = np.where(np.abs(diff) > 500)[0][-1]
+	
 	# 截断之前的大灰度值像素
-	img[img > threshold] = 0
+	img[img > index] = 0
 	# 绘制原始灰度直方图
 	plt.subplot(1, 2, 1)
 	plt.hist(gray.ravel(), 256, [0, 256], color='r')
