@@ -37,11 +37,14 @@ for i in range(4):  # Number of threads
 	t.start()
 
 # Add the images to the queue
-img_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\Nature'
-save_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\Nature_Resized'
+img_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\temp'
+save_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\temp_Resized'
+if not os.path.exists(save_dir):
+	os.makedirs(save_dir)
 for img_name in os.listdir(img_dir):
 	img_path = os.path.join(img_dir, img_name)
-	save_path = os.path.join(save_dir, img_name)
+	new_name = os.path.splitext(img_name)[0] + '.png'
+	save_path = os.path.join(save_dir, new_name)
 	q.put((img_path, save_path))
 
 # Wait for the queue to be empty
