@@ -2,8 +2,8 @@
 import cv2
 import numpy as np
 
+from tools.DecoratorTools import calculate_time
 from tools.ImageOperate import block_threshold, img_equalize
-from tools.PerformanceEval import calculate_time
 
 
 def custom_match_template(image, template, cost_func):

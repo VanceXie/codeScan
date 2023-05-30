@@ -3,8 +3,8 @@
 import cv2
 import numpy as np
 
+from tools.DecoratorTools import calculate_time
 from tools.ImageOperate import img_equalize
-from tools.PerformanceEval import calculate_time
 
 
 @calculate_time
@@ -31,6 +31,9 @@ def find_barcode_by_diff(img):
 	
 	# 归一化到0至255作为像素值
 	norm_diff_gradient = cv2.normalize(diff_gradient, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
+	
+	cv2.imshow('norm_diff_gradient', norm_diff_gradient)
+	
 	# 形态学开运算去除白色杂点
 	kernel = np.ones((3, 3), np.uint8)
 	opening_norm_diff_gradient = cv2.morphologyEx(norm_diff_gradient, cv2.MORPH_OPEN, kernel, iterations=3)
@@ -40,6 +43,8 @@ def find_barcode_by_diff(img):
 	diff_gray = cv2.convertScaleAbs(diff_gray)
 	# diff_gray = np.where(diff_gray > 0, diff_gray, 0)
 	norm_diff_gray = cv2.normalize(diff_gray, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
+	
+	cv2.imshow('norm_diff_gray', norm_diff_gray)
 	# 均值滤波
 	blur_norm_diff_gray = cv2.medianBlur(norm_diff_gray, 5)
 	
@@ -79,12 +84,11 @@ def find_barcode_by_diff(img):
 
 
 # # Load the image
-# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\20230211 AUO4# NG'
+# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
 # for index, item in enumerate(os.listdir(path)):
 # 	file = os.path.join(path, item)
 # 	if os.path.isfile(file):
-# 		# image = cv2.imread(file, 1)  # cv2.imread(filename)方法都不支持中文路径的文件读入
-# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)  # 支持中文路径的文件读入
 # 		image = img_equalize(image)
 # 		try:
 # 			result = find_barcode_by_diff(image)
@@ -98,8 +102,8 @@ def find_barcode_by_diff(img):
 # 				os.makedirs(result_path)
 # 			cv2.imwrite(os.path.join(result_path, new_name), result)
 # print('finished!')
-
-file = r"C:\Users\fy.xie\Desktop\Remap Image_screenshot_19.05.2023.png"
+#
+file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\5B2FCFT6GRZZZS0210_NG_BarCode_Camera3_0211124541.jpg"
 image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 image = img_equalize(image)
 result = find_barcode_by_diff(image)

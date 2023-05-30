@@ -5,7 +5,7 @@ from collections import defaultdict
 import cv2
 import numpy as np
 
-from tools.PerformanceEval import calculate_time
+from tools.DecoratorTools import calculate_time
 
 
 @calculate_time

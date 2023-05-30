@@ -1,3 +1,4 @@
+import os
 from collections import defaultdict
 
 import cv2
@@ -5,8 +6,8 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
 
-from tools.ImageOperate import hist_cut, hist_remap, img_equalize
-from tools.PerformanceEval import calculate_time
+from tools.DecoratorTools import calculate_time
+from tools.ImageOperate import img_equalize
 
 
 # 计算线段端点之间的距离矩阵
@@ -84,39 +85,39 @@ def find_barcode_by_cluster(img):
 	return clusters
 
 
-# # Load the image
-# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
-# for index, item in enumerate(os.listdir(path)):
-# 	file = os.path.join(path, item)
-# 	if os.path.isfile(file):
-# 		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# 		removed_img = hist_cut(image_source)
-# 		remapped_img = hist_remap(removed_img)
-# 		image_equalized = img_equalize(removed_img)
-# 		try:
-# 			clusters = find_barcode_by_cluster(image_equalized)
-# 			image_drawed = draw_clusters(image_source, clusters)
-# 		finally:
-# 			filename = os.path.splitext(item)
-# 			new_name = filename[0] + filename[-1]
-# 			result_path = os.path.join(path, 'result_LineCluster')
-# 			if not os.path.exists(result_path):
-# 				os.makedirs(result_path)
-# 			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
-# print('finished!')
+# Load the image
+path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
+for index, item in enumerate(os.listdir(path)):
+	file = os.path.join(path, item)
+	if os.path.isfile(file):
+		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+		# removed_img = hist_cut(image_source)
+		# remapped_img = hist_remap(removed_img)
+		image_equalized = img_equalize(image_source)
+		try:
+			clusters = find_barcode_by_cluster(image_equalized)
+			image_drawed = draw_clusters(image_source, clusters)
+		finally:
+			filename = os.path.splitext(item)
+			new_name = filename[0] + filename[-1]
+			result_path = os.path.join(path, 'result_LineCluster')
+			if not os.path.exists(result_path):
+				os.makedirs(result_path)
+			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
+print('finished!')
 
-file = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\0211111238_NG_BarCode_Camera3_0211111238.jpg'
-image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-
-removed_img = hist_cut(image_source)
-remapped_img = hist_remap(removed_img)
-
-image_equalized = img_equalize(remapped_img)
-# image_equalized2 = cv2.normalize(image_equalized, None, 0, 255, norm_type=cv2.NORM_MINMAX)
-clusters = find_barcode_by_cluster(image_equalized)
-image_drawed = draw_clusters(image_source, clusters)
-
-cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-cv2.imshow('result', image_drawed)
-if cv2.waitKey(0) == 27:
-	cv2.destroyAllWindows()
+# file = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\0211111238_NG_BarCode_Camera3_0211111238.jpg'
+# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+#
+# removed_img = hist_cut(image_source, 500)
+# remapped_img = hist_remap(removed_img)
+#
+# image_equalized = img_equalize(remapped_img)
+# # image_equalized2 = cv2.normalize(image_equalized, None, 0, 255, norm_type=cv2.NORM_MINMAX)
+# clusters = find_barcode_by_cluster(image_equalized)
+# image_drawed = draw_clusters(image_source, clusters)
+#
+# cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+# cv2.imshow('result', image_drawed)
+# if cv2.waitKey(0) == 27:
+# 	cv2.destroyAllWindows()

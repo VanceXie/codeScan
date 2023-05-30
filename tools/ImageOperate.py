@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from scipy.stats import norm
 from sympy import S, diff, solveset, symbols
 
-from tools.PerformanceEval import calculate_time
+from tools.DecoratorTools import calculate_time
 
 
 def img_equalize(image_rgb):
@@ -18,7 +18,7 @@ def img_equalize(image_rgb):
 	# 将LAB色彩空间的L通道分离出来
 	l, a, b = cv2.split(lab)
 	# 创建CLAHE对象
-	clahe = cv2.createCLAHE(clipLimit=5.0, tileGridSize=(3, 15))
+	clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(3, 15))
 	# 对L通道进行CLAHE均衡化
 	l_clahe = clahe.apply(l)
 	# 将CLAHE均衡化后的L通道合并回LAB色彩空间
@@ -134,16 +134,15 @@ def get_threshold_by_convexity(hist, exponent):
 
 
 @calculate_time
-def hist_cut(img):
+def hist_cut(img, mutation_quantityt):
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	# 计算灰度直方图
 	hist, bins = np.histogram(gray.flatten(), 256, [0, 256])
 	# hist = np.bincount(gray.flatten())
 	# 去除灰度值最高且占比较少的的几个直方图
-	threshold = get_threshold_by_convexity(hist)
 	# 计算直方图高度变化
-	diff = np.diff(hist)
-	index = np.where(np.abs(diff) > 500)[0][-1]
+	difference = np.diff(hist)
+	index = np.where(np.abs(difference) > mutation_quantityt)[0][-1]
 	
 	# 截断之前的大灰度值像素
 	img[img > index] = 0
@@ -208,7 +207,6 @@ def hist_remap(img):
 	# cv2.destroyAllWindows()
 	return remap_img
 
-
 # # Load the image
 # path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
 # for index, item in enumerate(os.listdir(path)):
@@ -226,9 +224,9 @@ def hist_remap(img):
 # 			cv2.imwrite(os.path.join(result_path, new_name), image_cut)
 # print('finished!')
 
-file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\image_cut\16.png"
-image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-image_cut = hist_cut(image_source)
+# file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\image_cut\16.png"
+# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# image_cut = hist_cut(image_source)
 
 # image_eq = img_equalize(img_cutted)
 # cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)

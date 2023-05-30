@@ -4,8 +4,8 @@ import math
 import cv2
 import numpy as np
 
+from tools.DecoratorTools import calculate_time
 from tools.ImageOperate import img_equalize
-from tools.PerformanceEval import calculate_time
 
 
 def compute_overlap(x1, y1, w1, h1, x2, y2, w2, h2):
