@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import block_threshold, img_equalize
+from tools.ImageOperate import block_threshold, clahe_equalize
 
 
 def custom_match_template(image, template, cost_func):
@@ -47,7 +47,7 @@ def custom_cost_func(image_patch, template):
 
 # 测试
 image = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_008.png")
-target_img = img_equalize(image)
+target_img = clahe_equalize(image)
 img_gray = cv2.cvtColor(target_img, cv2.COLOR_BGR2GRAY)
 block_image = block_threshold(img_gray)
 

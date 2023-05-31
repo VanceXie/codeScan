@@ -9,7 +9,7 @@ from sympy import S, diff, solveset, symbols
 from tools.DecoratorTools import calculate_time
 
 
-def img_equalize(image_rgb):
+def clahe_equalize(image_rgb):
 	"""
 	:param image_rgb:
 	:return:
@@ -228,7 +228,7 @@ def hist_remap(img):
 # image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 # image_cut = hist_cut(image_source)
 
-# image_eq = img_equalize(img_cutted)
+# image_eq = clahe_equalize(img_cutted)
 # cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
 # cv2.imshow('result', cv2.vconcat((img_cutted, image_eq)))
 # if cv2.waitKey(0) == 27:

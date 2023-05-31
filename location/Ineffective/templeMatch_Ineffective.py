@@ -4,7 +4,8 @@ import math
 import cv2
 import numpy as np
 
-from tools import *
+from tools.DecoratorTools import calculate_time
+from tools.ImageOperate import clahe_equalize
 
 
 def compute_overlap(x1, y1, w1, h1, x2, y2, w2, h2):
@@ -46,7 +47,7 @@ def rotate_and_scale(image, angle, scale):
 	return img_rotated
 
 
-@PerformanceEval.calculate_time
+@calculate_time
 def template_match_multi(image, template, angle_step: int = 30, scale_start: float = 0.5, scale_stop: float = 1.0, scale_step: float = 0.2, similarity_threshold: float = 1.0, overlap_threshold=0.3):
 	"""
 	:param image:
@@ -151,7 +152,7 @@ def template_match_sift(image, template, threshold=0.75, draw_result=True):
 # 读取目标图像和模板图像
 target_img = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\Defect_008.png")
 template_img = cv2.imread(r"D:\fy.xie\fenx\fenx - General\Ubei\Test_Label1\template.png")
-target_img = ImageOperate.img_equalize(target_img)
+target_img = clahe_equalize(target_img)
 img = template_match_multi(target_img, template_img, 180, 0.5, 1.0, 0.2, 1.0, 0.1)
 # img,_ = template_match_sift(target_img, template_img)
 cv2.namedWindow("Barcode Detection", cv2.WINDOW_NORMAL)

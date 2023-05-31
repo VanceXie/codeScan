@@ -7,7 +7,7 @@ from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import img_equalize
+from tools.ImageOperate import clahe_equalize
 
 
 # 计算线段端点之间的距离矩阵
@@ -93,7 +93,7 @@ for index, item in enumerate(os.listdir(path)):
 		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 		# removed_img = hist_cut(image_source)
 		# remapped_img = hist_remap(removed_img)
-		image_equalized = img_equalize(image_source)
+		image_equalized = clahe_equalize(image_source)
 		try:
 			clusters = find_barcode_by_cluster(image_equalized)
 			image_drawed = draw_clusters(image_source, clusters)
@@ -112,7 +112,7 @@ print('finished!')
 # removed_img = hist_cut(image_source, 500)
 # remapped_img = hist_remap(removed_img)
 #
-# image_equalized = img_equalize(remapped_img)
+# image_equalized = clahe_equalize(remapped_img)
 # # image_equalized2 = cv2.normalize(image_equalized, None, 0, 255, norm_type=cv2.NORM_MINMAX)
 # clusters = find_barcode_by_cluster(image_equalized)
 # image_drawed = draw_clusters(image_source, clusters)

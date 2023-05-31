@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import img_equalize
+from tools.ImageOperate import clahe_equalize
 
 
 @calculate_time
@@ -89,7 +89,7 @@ def find_barcode_by_diff(img):
 # 	file = os.path.join(path, item)
 # 	if os.path.isfile(file):
 # 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)  # 支持中文路径的文件读入
-# 		image = img_equalize(image)
+# 		image = clahe_equalize(image)
 # 		try:
 # 			result = find_barcode_by_diff(image)
 # 		except:
@@ -105,7 +105,7 @@ def find_barcode_by_diff(img):
 #
 file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\5B2FCFT6GRZZZS0210_NG_BarCode_Camera3_0211124541.jpg"
 image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-image = img_equalize(image)
+image = clahe_equalize(image)
 result = find_barcode_by_diff(image)
 cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
 # Display the image
