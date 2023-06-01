@@ -81,34 +81,3 @@ def find_barcode_by_diff(img):
 	
 	# 显示结果
 	return img
-
-
-# # Load the image
-# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
-# for index, item in enumerate(os.listdir(path)):
-# 	file = os.path.join(path, item)
-# 	if os.path.isfile(file):
-# 		image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)  # 支持中文路径的文件读入
-# 		image = clahe_equalize(image)
-# 		try:
-# 			result = find_barcode_by_diff(image)
-# 		except:
-# 			pass
-# 		finally:
-# 			filename = os.path.splitext(item)
-# 			new_name = filename[0] + filename[-1]
-# 			result_path = os.path.join(path, 'result_GradMorph')
-# 			if not os.path.exists(result_path):
-# 				os.makedirs(result_path)
-# 			cv2.imwrite(os.path.join(result_path, new_name), result)
-# print('finished!')
-#
-file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\5B2FCFT6GRZZZS0210_NG_BarCode_Camera3_0211124541.jpg"
-image = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-image = clahe_equalize(image)
-result = find_barcode_by_diff(image)
-cv2.namedWindow("Barcode detection", cv2.WINDOW_NORMAL)
-# Display the image
-cv2.imshow("Barcode detection", result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()

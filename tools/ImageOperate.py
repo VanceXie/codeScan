@@ -28,16 +28,33 @@ def clahe_equalize(image_rgb):
 	return bgr_clahe
 
 
-def sharpen(img):
-	kernel = np.array([[-1, -1, -1],
-					   [-1, 9, -1],
-					   [-1, -1, -1]])
+def filter_small_bright_spots(image, area_threshold):
+	# 将图像转换为灰度图像
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	
-	# 应用锐化算子
-	sharpened = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=1, borderType=cv2.BORDER_CONSTANT)
-	sharpened_abs = cv2.convertScaleAbs(sharpened)
-	# sharpened_norm = cv2.normalize(sharpened_abs, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8UC1)
-	return sharpened_abs
+	# 应用自适应阈值化，将图像转换为二值图像
+	thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
+	
+	# 对二值图像执行连通组件分析
+	connectivity = 8  # 连通性为8，考虑八个邻域像素
+	output = cv2.connectedComponentsWithStats(thresh, connectivity, cv2.CV_32S)
+	
+	# 获取连通组件的标签和统计信息
+	num_labels = output[0]
+	labels = output[1]
+	stats = output[2]
+	
+	# 遍历每个连通区域，根据面积阈值进行筛选
+	for label in range(1, num_labels):
+		area = stats[label, cv2.CC_STAT_AREA]
+		if area < area_threshold:
+			# 将小面积连通区域设为背景（黑色）
+			labels[labels == label] = 0
+	
+	# 重新将图像转换为彩色
+	filtered_image = cv2.cvtColor(labels.astype(np.uint8), cv2.COLOR_GRAY2BGR)
+	
+	return filtered_image
 
 
 def pyr_down(image, pyr_levels=3):
@@ -135,6 +152,11 @@ def get_threshold_by_convexity(hist, exponent):
 
 @calculate_time
 def hist_cut(img, mutation_quantityt):
+	"""
+	:param img:
+	:param mutation_quantityt: 突变量
+	:return:
+	"""
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	# 计算灰度直方图
 	hist, bins = np.histogram(gray.flatten(), 256, [0, 256])
@@ -161,10 +183,10 @@ def hist_cut(img, mutation_quantityt):
 	plt.ylabel('Normalized Number of Pixels')
 	plt.title('cutted Histogram')
 	plt.show()
-	# 显示去除部分直方图的图像
-	cv2.imshow('Removed Image', img)
-	cv2.waitKey(0)
-	cv2.destroyAllWindows()
+	# # 显示去除部分直方图的图像
+	# cv2.imshow('Removed Image', img)
+	# cv2.waitKey(0)
+	# cv2.destroyAllWindows()
 	return img
 
 
