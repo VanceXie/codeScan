@@ -9,12 +9,12 @@ from sympy import S, diff, solveset, symbols
 from tools.DecoratorTools import calculate_time
 
 
-def clahe_equalize(image_rgb):
+def clahe_equalize(image_bgr: np.ndarray):
 	"""
-	:param image_rgb:
-	:return:
+	:param image_bgr:ndarray of image
+	:return: bgr_clahe, image applied by clahe
 	"""
-	lab = cv2.cvtColor(image_rgb, cv2.COLOR_BGR2LAB)
+	lab = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2LAB)
 	# 将LAB色彩空间的L通道分离出来
 	l, a, b = cv2.split(lab)
 	# 创建CLAHE对象
@@ -57,26 +57,31 @@ def filter_small_bright_spots(image, area_threshold):
 	return filtered_image
 
 
-def pyr_down(image, pyr_levels=3):
+def pyr_down(image: np.ndarray, pyr_levels: int = 2) -> list:
 	"""
-	:param image:
-	:param pyr_levels:
-	:return:
+	Downsample to get the list of graph pyramid
+	:param image: ndarray of image
+	:param pyr_levels: The order of the graph pyramid
+	:return: list of graph pyramid
 	"""
-	pyramid = [image]
-	for i in range(pyr_levels):
-		# 降采样
-		image = cv2.pyrDown(image)
-		pyramid.append(image)
-	return pyramid
+	# Loop through the specified number of pyramid levels
+	# Downsample the image using Gaussian pyramid
+	# Append the downsampled image to the pyramid list
+	return [image] + [cv2.pyrDown(image) for _ in range(pyr_levels)]
 
 
-def get_location_original(location, pyr_levels):
-	if pyr_levels == 0:
-		return location
-	else:
-		location = location * 2 - 1
-		return get_location_original(location, pyr_levels - 1)
+def get_original_location(point_coordinates: np.ndarray, pyramid_order: int) -> np.ndarray:
+	"""
+	Get the position of the point on the original image from the downsampled image
+	:param point_coordinates: coordinates of points on downsampled image, np.ndarray
+	:param pyramid_order: The order of the graph pyramid, non-negative integer
+	:return: coordinates of points on original image, np.ndarray
+	"""
+	if not isinstance(pyramid_order, int) or pyramid_order < 0:
+		raise ValueError("Pyramid order must be a non-negative integer.")
+	if pyramid_order != 0:
+		point_coordinates = point_coordinates * 2 - 1
+	return point_coordinates
 
 
 @calculate_time
@@ -130,8 +135,8 @@ def get_threshold_by_convexity(hist, exponent):
 		# d3_f = np.dot(X[:, :exponent_max - 2], coefficients[::-1][3:] * result[::-1])
 		return f
 	
-	def fit_func(x, coeffs):
-		f = np.polyval(coeffs, x)
+	def fit_func(variance, coeffs):
+		f = np.polyval(coeffs, variance)
 		return f
 	
 	# 生成样本数据
@@ -141,7 +146,8 @@ def get_threshold_by_convexity(hist, exponent):
 	
 	x = symbols('x')
 	d2_fit_func = diff(fit_func(x, popt), x, 2)
-	solution = np.asarray(list(solveset(d2_fit_func, x, domain=S.Reals)))
+	solveset(d2_fit_func, x, domain=S.Reals)
+	solution = np.array([solveset(d2_fit_func, x, domain=S.Reals)])
 	print(solution)
 	plt.bar(xdata, hist)
 	plt.plot(xdata, fit_func(xdata, popt), color='r')
@@ -151,11 +157,11 @@ def get_threshold_by_convexity(hist, exponent):
 
 
 @calculate_time
-def hist_cut(img, mutation_quantityt):
+def hist_cut(img, mutation_quantity):
 	"""
-	:param img:
-	:param mutation_quantityt: 突变量
-	:return:
+	:param img: 3-D ndarray
+	:param mutation_quantity: 突变量
+	:return: 3-D ndarray,image
 	"""
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	# 计算灰度直方图
@@ -164,29 +170,9 @@ def hist_cut(img, mutation_quantityt):
 	# 去除灰度值最高且占比较少的的几个直方图
 	# 计算直方图高度变化
 	difference = np.diff(hist)
-	index = np.where(np.abs(difference) > mutation_quantityt)[0][-1]
-	
+	index = np.where(np.abs(difference) > mutation_quantity)[0][-1]
 	# 截断之前的大灰度值像素
 	img[img > index] = 0
-	# 绘制原始灰度直方图
-	plt.subplot(1, 2, 1)
-	plt.hist(gray.ravel(), 256, [0, 256], color='r')
-	plt.xlim([0, 256])
-	plt.xlabel('Gray Level')
-	plt.ylabel('Number of Pixels')
-	plt.title('Original Histogram')
-	# 绘制去除部分直方图后的灰度直方图
-	plt.subplot(1, 2, 2)
-	plt.hist(img.ravel(), 256, [0, 256], color='g')
-	plt.xlim([0, 256])
-	plt.xlabel('Gray Level')
-	plt.ylabel('Normalized Number of Pixels')
-	plt.title('cutted Histogram')
-	plt.show()
-	# # 显示去除部分直方图的图像
-	# cv2.imshow('Removed Image', img)
-	# cv2.waitKey(0)
-	# cv2.destroyAllWindows()
 	return img
 
 
@@ -203,55 +189,4 @@ def hist_remap(img):
 	lut = np.uint8(remap_hist * 255)[:-1]
 	# 应用像素值映射表，输出更改分布后的图像
 	remap_img = cv2.LUT(img, lut)
-	
-	# norm_img = cv2.normalize(remap_img, None, 0, 255, cv2.NORM_MINMAX)
-	# cv2.imshow("Remap Image", remap_img)
-	#
-	# # 绘制原始图像的灰度直方图和更改分布后的灰度直方图
-	# plt.subplot(2, 2, 1)
-	# plt.hist(img.ravel(), 256, [0, 256])
-	# plt.title("Original Histogram")
-	# plt.subplot(2, 2, 2)
-	# plt.hist(remap_img.ravel(), 256, [0, 256])
-	# plt.title("Remapped Histogram")
-	#
-	# plt.subplot(2, 2, 3)
-	# plt.xlim()
-	# plt.ylim()
-	# plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-	# plt.subplot(2, 2, 4)
-	# plt.xlim()
-	# plt.ylim()
-	# plt.imshow(cv2.cvtColor(remap_img, cv2.COLOR_BGR2RGB))
-	# plt.show()
-	#
-	# cv2.waitKey(0)
-	# cv2.destroyAllWindows()
 	return remap_img
-
-# # Load the image
-# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
-# for index, item in enumerate(os.listdir(path)):
-# 	file = os.path.join(path, item)
-# 	if os.path.isfile(file):
-# 		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# 		try:
-# 			image_cut=hist_cut(image_source)
-# 		finally:
-# 			filename = os.path.splitext(item)
-# 			new_name = filename[0] + filename[-1]
-# 			result_path = os.path.join(path, 'image_cut')
-# 			if not os.path.exists(result_path):
-# 				os.makedirs(result_path)
-# 			cv2.imwrite(os.path.join(result_path, new_name), image_cut)
-# print('finished!')
-
-# file = r"D:\Fenkx\Fenkx - General\Ubei\Test_Label1\image_cut\16.png"
-# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# image_cut = hist_cut(image_source)
-
-# image_eq = clahe_equalize(img_cutted)
-# cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-# cv2.imshow('result', cv2.vconcat((img_cutted, image_eq)))
-# if cv2.waitKey(0) == 27:
-# 	cv2.destroyAllWindows()
