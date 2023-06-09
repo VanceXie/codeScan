@@ -14,9 +14,9 @@ def pic_resize(img_path, save_path):
 	img_resized_shape = img_resized.shape[:2]
 	
 	if img_resized_shape[0] > img_resized_shape[1]:
-		img_padding = cv2.copyMakeBorder(img_resized, 0, 0, 0, (1024 - img_resized_shape[1]), cv2.BORDER_REFLECT)
+		img_padding = cv2.copyMakeBorder(img_resized, 0, 0, 0, (1024 - img_resized_shape[1]), cv2.BORDER_CONSTANT, value=0)
 	elif img_resized_shape[0] < img_resized_shape[1]:
-		img_padding = cv2.copyMakeBorder(img_resized, 0, (1024 - img_resized_shape[0]), 0, 0, cv2.BORDER_REFLECT)
+		img_padding = cv2.copyMakeBorder(img_resized, 0, (1024 - img_resized_shape[0]), 0, 0, cv2.BORDER_CONSTANT, value=0)
 	else:
 		img_padding = img_resized
 	cv2.imwrite(save_path, img_padding)
@@ -37,14 +37,13 @@ for i in range(4):  # Number of threads
 	t.start()
 
 # Add the images to the queue
-img_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\temp'
-save_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\temp_Resized'
+img_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Test_Label_ALL'
+save_dir = r'D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Test_Label_Resized'
 if not os.path.exists(save_dir):
 	os.makedirs(save_dir)
 for img_name in os.listdir(img_dir):
 	img_path = os.path.join(img_dir, img_name)
-	new_name = os.path.splitext(img_name)[0] + '.png'
-	save_path = os.path.join(save_dir, new_name)
+	save_path = os.path.join(save_dir, img_name)
 	q.put((img_path, save_path))
 
 # Wait for the queue to be empty
