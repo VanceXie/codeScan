@@ -1,4 +1,5 @@
 import os
+import time
 from collections import defaultdict
 
 import cv2
@@ -7,7 +8,7 @@ from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import clahe_equalize
+from tools.ImageOperate import clahe_equalize, hist_cut, pyr_down
 
 
 # 计算线段端点之间的距离矩阵
@@ -30,12 +31,26 @@ def cluster_lines(lines, eps):
 	# 使用DBSCAN进行聚类
 	db = DBSCAN(eps=eps, min_samples=10, metric='precomputed')
 	labels = db.fit_predict(dist)
+	
 	# 将不同簇的线段分组
-	clusters = defaultdict(list)
+	
+	clusters = defaultdict(lambda: np.empty((0, 4)))
 	for i, label in enumerate(labels):
-		clusters[label].append(lines[i])
+		clusters[label] = np.vstack((clusters[label], lines[i]))
+	
 	max_length = max(len(v) for v in clusters.values())
-	clusters_new = {key: value for key, value in clusters.items() if len(value) >= 0.75 * max_length}
+	# 提取第二维首个元素进行排序
+	# 使用排序后的索引对数组进行重排
+	for cluster in clusters.values():
+		cluster = np.array(cluster)
+		# 提取第二维首个元素进行排序
+		sorted_indices = np.argsort(cluster[:, 0])
+		# 使用排序后的索引对数组进行重排
+		sorted_arr = cluster[sorted_indices]
+		n = cluster[np.argsort(cluster[:, 0, 0])]
+	dist_list = [np.diag(compute_distance_matrix(cluster[np.argsort(cluster[:, 0])]), k=1) for cluster in clusters.values()]
+	
+	clusters_new = {key: value for key, value in clusters.items() if len(value) >= 0.3 * max_length}
 	return clusters_new
 
 
@@ -54,70 +69,79 @@ def draw_clusters(img, clusters):
 
 
 @calculate_time
-def find_barcode_by_cluster(img):
+def find_barcode_by_cluster(img, eps):
 	"""
-	:param img: 'image as np.array'
-	:return: np.array(dtype=np.uint8)
+	:param eps: max distance between two lines which could be divided into one group
+	:param img: image as np.ndarry
+	:return: np.ndarry(dtype=np.uint8)
 	"""
 	# Perform edge detection
-	# gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	edges = cv2.Canny(img, 80, 255)
-	# # Find lines in the image using HoughLines,霍夫变换对于较短且密集的线段检测效果不好
-	# lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 5, minLineLength=10, maxLineGap=2)
 	
-	# 创建线段检测器
+	# instant LineSegmentDetector
 	lsd = cv2.createLineSegmentDetector()
 	
-	# 检测直线段
+	# detect lines
 	lines, width, prec, nfa = lsd.detect(edges)
 	
+	# lines = np.reshape(lines, (-1, 4))
 	# Group lines by slope
 	groups = defaultdict(list)
 	for line in lines:
 		x1, y1, x2, y2 = line[0].astype(int)
-		# cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 1)
 		slope = (y2 - y1) / (x2 - x1) if x2 != x1 else float('inf')
+		
+		# groups[slope] = np.vstack((groups[slope], line))
+		'''
+		使用 np.vstack 函数将每个线段添加到对应斜率的数组中，这会导致每次迭代都要进行内存分配和数据复制操作，造成性能损失。
+		每次迭代中的动态分配空间会产生额外的开销，并且随着数组大小的增长，这种开销会逐渐累积。
+		而且迭代前需要reshape操作更改lines数组的形状。
+		'''
 		groups[slope].append(line)
 	
+	for slope, lines_list in groups.items():
+		# numpy.concatenate 函数一次性将多个数组合并为一个数组，不会产生额外的动态分配空间的开销
+		groups[slope] = np.concatenate(lines_list, axis=0)
+	
 	# Find the group with the most lines
-	linemost = max(groups.values(), key=len)
-	clusters = cluster_lines(linemost, eps=100)
+	group_with_most_lines = max(groups.values(), key=len)
+	clusters = cluster_lines(group_with_most_lines, eps=eps)
 	return clusters
 
 
-# Load the image
-path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
-for index, item in enumerate(os.listdir(path)):
-	file = os.path.join(path, item)
-	if os.path.isfile(file):
-		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-		# removed_img = hist_cut(image_source)
-		# remapped_img = hist_remap(removed_img)
-		image_equalized = clahe_equalize(image_source)
-		try:
-			clusters = find_barcode_by_cluster(image_equalized)
-			image_drawed = draw_clusters(image_source, clusters)
-		finally:
-			filename = os.path.splitext(item)
-			new_name = filename[0] + filename[-1]
-			result_path = os.path.join(path, 'result_LineCluster')
-			if not os.path.exists(result_path):
-				os.makedirs(result_path)
-			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
-print('finished!')
+# # Load the image
+# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
+# for index, item in enumerate(os.listdir(path)):
+# 	file = os.path.join(path, item)
+# 	if os.path.isfile(file):
+# 		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# 		# removed_img = hist_cut(image_source)
+# 		# remapped_img = hist_remap(removed_img)
+# 		image_equalized = clahe_equalize(image_source)
+# 		try:
+# 			clusters = find_barcode_by_cluster(image_equalized)
+# 			image_drawed = draw_clusters(image_source, clusters)
+# 		finally:
+# 			filename = os.path.splitext(item)
+# 			new_name = filename[0] + filename[-1]
+# 			result_path = os.path.join(path, 'result_LineCluster')
+# 			if not os.path.exists(result_path):
+# 				os.makedirs(result_path)
+# 			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
+# print('finished!')
 
-# file = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1\0211111238_NG_BarCode_Camera3_0211111238.jpg'
-# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-#
-# removed_img = hist_cut(image_source, 500)
-# remapped_img = hist_remap(removed_img)
-#
-# image_equalized = clahe_equalize(remapped_img)
-# # image_equalized2 = cv2.normalize(image_equalized, None, 0, 255, norm_type=cv2.NORM_MINMAX)
-# clusters = find_barcode_by_cluster(image_equalized)
-# image_drawed = draw_clusters(image_source, clusters)
-#
-# cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-# cv2.imshow('result', image_drawed)
-# if cv2.waitKey(0) == 27:
-# 	cv2.destroyAllWindows()
+file = r"D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Factory\1216121041_NG_BarCode_Camera3_1216121042.jpg"
+image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+image_pydown = pyr_down(image_source)
+
+image_cut = hist_cut(image_pydown[-1], 750)
+gamma = np.log(255) / np.log(np.max(image_cut))
+equ = np.power(image_cut, gamma).astype(np.uint8)
+
+clusters = find_barcode_by_cluster(equ, 100)
+image_drawed = draw_clusters(equ, clusters)
+
+cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+cv2.imshow('result', image_drawed)
+if cv2.waitKey(0) == 27:
+	cv2.destroyAllWindows()
