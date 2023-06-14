@@ -29,6 +29,12 @@ def clahe_equalize(image_bgr: np.ndarray):
 
 
 def filter_small_bright_spots(image, area_threshold):
+	"""
+	filter small bright spots
+	:param image: image
+	:param area_threshold: area threshold of abnormal bright spot
+	:return:
+	"""
 	# 将图像转换为灰度图像
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	
@@ -156,7 +162,6 @@ def get_threshold_by_convexity(hist, exponent):
 	return int(solution[(solution >= 0) & (solution <= 255)][-1])
 
 
-@calculate_time
 def hist_cut(img, mutation_quantity):
 	"""
 	:param img: 3-D ndarray

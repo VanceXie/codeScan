@@ -33,22 +33,19 @@ def cluster_lines(lines, eps):
 	labels = db.fit_predict(dist)
 	
 	# 将不同簇的线段分组
-	
-	clusters = defaultdict(lambda: np.empty((0, 4)))
+	clusters = defaultdict(list)
 	for i, label in enumerate(labels):
-		clusters[label] = np.vstack((clusters[label], lines[i]))
+		clusters[label].append(lines[i:i + 1, :])
+	for label, lines in clusters.items():
+		clusters[label] = np.concatenate(lines, axis=0)
 	
 	max_length = max(len(v) for v in clusters.values())
-	# 提取第二维首个元素进行排序
-	# 使用排序后的索引对数组进行重排
-	for cluster in clusters.values():
-		cluster = np.array(cluster)
-		# 提取第二维首个元素进行排序
-		sorted_indices = np.argsort(cluster[:, 0])
-		# 使用排序后的索引对数组进行重排
-		sorted_arr = cluster[sorted_indices]
-		n = cluster[np.argsort(cluster[:, 0, 0])]
-	dist_list = [np.diag(compute_distance_matrix(cluster[np.argsort(cluster[:, 0])]), k=1) for cluster in clusters.values()]
+	
+	# 根据每一行首个元素进行排序
+	[lines.sort(axis=0) for lines in clusters.values()]
+	
+	dist_dic = [np.diag(compute_distance_matrix(cluster[np.argsort(cluster[:, 0])]), k=1) for cluster in clusters.values()]
+	std_list = [np.std(dist_list) for dist_list in dist_dic]
 	
 	clusters_new = {key: value for key, value in clusters.items() if len(value) >= 0.3 * max_length}
 	return clusters_new
