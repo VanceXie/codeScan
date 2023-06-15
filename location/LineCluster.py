@@ -8,7 +8,7 @@ from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import clahe_equalize, hist_cut, pyr_down
+from tools.ImageOperate import clahe_equalize, hist_cut, pyrdown_multithread
 
 
 # 计算线段端点之间的距离矩阵
@@ -129,7 +129,7 @@ def find_barcode_by_cluster(img, eps):
 
 file = r"D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Factory\1216121041_NG_BarCode_Camera3_1216121042.jpg"
 image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-image_pydown = pyr_down(image_source)
+image_pydown = pyrdown_multithread(image_source)
 
 image_cut = hist_cut(image_pydown[-1], 750)
 gamma = np.log(255) / np.log(np.max(image_cut))

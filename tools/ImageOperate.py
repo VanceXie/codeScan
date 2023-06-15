@@ -2,6 +2,7 @@
 
 import cv2
 import numpy as np
+import concurrent.futures
 from matplotlib import pyplot as plt
 from scipy.stats import norm
 from sympy import S, diff, solveset, symbols
@@ -63,17 +64,51 @@ def filter_small_bright_spots(image, area_threshold):
 	return filtered_image
 
 
-def pyr_down(image: np.ndarray, pyr_levels: int = 2) -> list:
+@calculate_time
+def pyrdown_multithread(image_source: np.ndarray, pyr_levels: int = 2) -> list:
+	if not isinstance(image_source, np.ndarray):
+		raise TypeError("Input image must be a valid ndarray.")
+	if not isinstance(pyr_levels, int):
+		raise TypeError("Pyramid level must be an integer.")
+	
+	# Initialize thread pool executor
+	executor = concurrent.futures.ThreadPoolExecutor()
+	
+	# Generate pyramid levels in parallel
+	pyramid = [image_source]
+	for level in range(0, pyr_levels):
+		future = executor.submit(lambda img: (cv2.pyrDown(img)), pyramid[-1])
+		image = future.result()
+		pyramid.append(image)
+	
+	# Shutdown the executor
+	executor.shutdown()
+	
+	return pyramid
+
+
+@calculate_time
+def pyrdown(image_source: np.ndarray, pyr_levels: int = 2) -> list:
 	"""
 	Downsample to get the list of graph pyramid
-	:param image: ndarray of image
+	:param image_source: ndarray of image
 	:param pyr_levels: The order of the graph pyramid
 	:return: list of graph pyramid
 	"""
-	# Loop through the specified number of pyramid levels
-	# Downsample the image using Gaussian pyramid
-	# Append the downsampled image to the pyramid list
-	return [image] + [cv2.pyrDown(image) for _ in range(pyr_levels)]
+	if not isinstance(image_source, np.ndarray):
+		raise TypeError("Input image must be a valid ndarray.")
+	if not isinstance(pyr_levels, int):
+		raise TypeError("Pyramid level must be an integer.")
+	# Preallocate pyramid list
+	pyramid = [None] * (pyr_levels + 1)
+	pyramid[0] = image_source
+	# Generate pyramid
+	image = image_source
+	for level in range(1, pyr_levels + 1):
+		image = cv2.pyrDown(image)
+		pyramid[level] = image.copy()
+	
+	return pyramid
 
 
 def get_original_location(point_coordinates: np.ndarray, pyramid_order: int) -> np.ndarray:
