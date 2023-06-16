@@ -154,7 +154,7 @@ def block_threshold(image, block_size=500):
 	return final_image
 
 
-def get_threshold_by_convexity(hist, exponent):
+def get_threshold_by_convexity(hist, range_min, range_max, exponent):
 	"""
 	（效果不佳，弃用）根据直方图拟合曲线的凹凸性确定阈值
 	:param hist: 根据图片计算出的灰度直方图
@@ -181,7 +181,7 @@ def get_threshold_by_convexity(hist, exponent):
 		return f
 	
 	# 生成样本数据
-	xdata = np.arange(256.0)
+	xdata = np.arange(range_min, range_max + 1, 1)
 	
 	popt = np.polyfit(xdata, hist, exponent)
 	
