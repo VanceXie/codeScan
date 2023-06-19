@@ -29,39 +29,32 @@ def clahe_equalize(image_bgr: np.ndarray):
 	return bgr_clahe
 
 
-def filter_small_bright_spots(image, area_threshold):
+def filter_bright_spots(image):
 	"""
-	filter small bright spots
-	:param image: image
-	:param area_threshold: area threshold of abnormal bright spot
+	filter the bright spots in the image, the original image will be changed
+	:param image:
 	:return:
 	"""
-	# 将图像转换为灰度图像
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	
-	# 应用自适应阈值化，将图像转换为二值图像
-	thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
-	
-	# 对二值图像执行连通组件分析
-	connectivity = 8  # 连通性为8，考虑八个邻域像素
-	output = cv2.connectedComponentsWithStats(thresh, connectivity, cv2.CV_32S)
-	
-	# 获取连通组件的标签和统计信息
-	num_labels = output[0]
-	labels = output[1]
-	stats = output[2]
-	
-	# 遍历每个连通区域，根据面积阈值进行筛选
-	for label in range(1, num_labels):
-		area = stats[label, cv2.CC_STAT_AREA]
-		if area < area_threshold:
-			# 将小面积连通区域设为背景（黑色）
-			labels[labels == label] = 0
-	
-	# 重新将图像转换为彩色
-	filtered_image = cv2.cvtColor(labels.astype(np.uint8), cv2.COLOR_GRAY2BGR)
-	
-	return filtered_image
+	image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	ret, image_threshold0 = cv2.threshold(image_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+	contours, hierarchy = cv2.findContours(image_threshold0, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	lsd = cv2.createLineSegmentDetector()
+	lines_list = []
+	for contour in contours:
+		x, y, w, h = cv2.boundingRect(contour)
+		if contour.shape[0] > 50:
+			image_gray_part = image_gray[y:y + h, x:x + w]
+			# image_threshold = cv2.adaptiveThreshold(image_gray_part, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 5, 0)
+			ret1, image_threshold1 = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
+			# detect lines_list
+			lines, width, prec, nfa = lsd.detect(image_threshold1)
+			if lines.shape[0] < 70:
+				cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
+			lines_list.append(lines)
+		else:
+			# color = get_rect_corner_ave(image, x, y, w, h)
+			cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
+	return image
 
 
 @calculate_time
@@ -230,3 +223,27 @@ def hist_remap(img):
 	# 应用像素值映射表，输出更改分布后的图像
 	remap_img = cv2.LUT(img, lut)
 	return remap_img
+
+
+def get_box_corner_ave(image, box):
+	# 确保 box 是一个 numpy.ndarray 类型的数组
+	if isinstance(box, np.ndarray):
+		# 使用 NumPy 的索引功能一次性提取所有顶点的像素值
+		pixel_values = image[box[:, 1], box[:, 0]]
+		# 计算每个通道的平均值
+		avg_values = np.mean(pixel_values, axis=0)
+		# 转为元素数据类型为int的list
+		average_pixel_value = avg_values.astype(int).tolist()
+		return average_pixel_value
+	else:
+		raise ValueError("Invalid input. 'box' must be a numpy.ndarray.")
+
+
+def get_rect_corner_ave(image, x, y, w, h):
+	# 提取矩形区域的像素值
+	rect_pixels = image[y:y + h, x:x + w]
+	# 计算像素值的平均值
+	avg_pixel_value = np.mean(rect_pixels, axis=(0, 1))
+	# 转为元素数据类型为int的list
+	average_pixel_value = avg_pixel_value.astype(int).tolist()
+	return average_pixel_value

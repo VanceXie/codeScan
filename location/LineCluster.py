@@ -105,7 +105,6 @@ def find_barcode_by_cluster(img, eps):
 	clusters = cluster_lines(group_with_most_lines, eps=eps)
 	return clusters
 
-
 # # Load the image
 # path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
 # for index, item in enumerate(os.listdir(path)):
@@ -127,18 +126,18 @@ def find_barcode_by_cluster(img, eps):
 # 			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
 # print('finished!')
 
-file = r"D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Factory\1216121041_NG_BarCode_Camera3_1216121042.jpg"
-image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-image_pydown = pyrdown_multithread(image_source)
-
-image_cut = hist_cut(image_pydown[-1], 750)
-gamma = np.log(255) / np.log(np.max(image_cut))
-equ = np.power(image_cut, gamma).astype(np.uint8)
-
-clusters = find_barcode_by_cluster(equ, 100)
-image_drawed = draw_clusters(equ, clusters)
-
-cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-cv2.imshow('result', image_drawed)
-if cv2.waitKey(0) == 27:
-	cv2.destroyAllWindows()
+# file = r"D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Factory\1216121041_NG_BarCode_Camera3_1216121042.jpg"
+# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
+# image_pydown = pyrdown_multithread(image_source)
+#
+# image_cut = hist_cut(image_pydown[-1], 750)
+# gamma = np.log(255) / np.log(np.max(image_cut))
+# equ = np.power(image_cut, gamma).astype(np.uint8)
+#
+# clusters = find_barcode_by_cluster(equ, 100)
+# image_drawed = draw_clusters(equ, clusters)
+#
+# cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+# cv2.imshow('result', image_drawed)
+# if cv2.waitKey(0) == 27:
+# 	cv2.destroyAllWindows()
