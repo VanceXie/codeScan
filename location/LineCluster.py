@@ -1,22 +1,18 @@
-import os
-import time
-from collections import defaultdict
-
 import cv2
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from sklearn.cluster import DBSCAN
-
+from collections import defaultdict
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import clahe_equalize, hist_cut, pyrdown_multithread
+from tools.ImageOperate import pyrdown_multithread
 
 
 # 计算线段端点之间的距离矩阵
-def compute_distance_matrix(lines):
+def compute_distance_matrix(lines: list) -> np.ndarray:
 	"""
-	计算每条线之间的距离矩阵
-	:param lines: 传入的线段list
-	:return: 距离矩阵，对角线元素为0的对称矩阵
+	Calculate the distance between two lines to form a distance matrix
+	:param lines: list of lines
+	:return: distance matrix, a symmetric matrix whose diagonal elements are 0
 	"""
 	lines = np.array(lines).reshape((-1, 4))  # 把含有m个元素（每个元素是(1×4)的ndarray）的线段list转化为m×4的ndarray，每一行代表每个线段的端点坐标(x0,y0,x1,y1)
 	dist_triple = pdist(lines)  # 计算n维向量数组的成对距离的函数。输出结果会压缩成一个一维距离向量，只包含输入矩阵的下三角部分（省略了对角线上的元素）
@@ -25,7 +21,13 @@ def compute_distance_matrix(lines):
 
 
 # 对线段进行无监督聚类
-def cluster_lines(lines, eps):
+def cluster_lines(lines: list, eps: int) -> dict:
+	"""
+	cluster lines by distance
+	:param lines: list of lines
+	:param eps: eps of cluster
+	:return: Dictionary with label as key and list of lines as value
+	"""
 	# 计算距离矩阵
 	dist = compute_distance_matrix(lines)
 	# 使用DBSCAN进行聚类
@@ -52,11 +54,16 @@ def cluster_lines(lines, eps):
 
 
 # 绘制分组区域
-def draw_clusters(img, clusters):
+def draw_clusters(img: np.ndarray, clusters: dict) -> np.ndarray:
+	"""
+	:param img: image to draw
+	:param clusters: Dictionary with slope as key and list of lines as value
+	:return: image
+	"""
 	for label, lines in clusters.items():
 		color = np.random.randint(0, 255, (3,))
 		for line in lines:
-			p1, p2 = line[0][:2].astype(int), line[0][2:].astype(int)
+			p1, p2 = line[:2].astype(int), line[2:].astype(int)
 			cv2.line(img, (p1[0], p1[1]), (p2[0], p2[1]), color.tolist(), 1)
 		
 		contours = np.asarray(lines).reshape(-1, 2)
@@ -65,23 +72,16 @@ def draw_clusters(img, clusters):
 	return img
 
 
-@calculate_time
-def find_barcode_by_cluster(img, eps):
+def line_detect(lsd: cv2.LineSegmentDetector, edges: np.ndarray):
 	"""
-	:param eps: max distance between two lines which could be divided into one group
-	:param img: image as np.ndarry
-	:return: np.ndarry(dtype=np.uint8)
+	detect lines and group the lines by slope
+	:param lsd: LineSegmentDetector
+	:param edges: Binary image or grayscale image
+	:return: Dictionary with slope as key and list of lines as value
 	"""
-	# Perform edge detection
-	edges = cv2.Canny(img, 80, 255)
-	
-	# instant LineSegmentDetector
-	lsd = cv2.createLineSegmentDetector()
-	
 	# detect lines
 	lines, width, prec, nfa = lsd.detect(edges)
 	
-	# lines = np.reshape(lines, (-1, 4))
 	# Group lines by slope
 	groups = defaultdict(list)
 	for line in lines:
@@ -99,6 +99,24 @@ def find_barcode_by_cluster(img, eps):
 	for slope, lines_list in groups.items():
 		# numpy.concatenate 函数一次性将多个数组合并为一个数组，不会产生额外的动态分配空间的开销
 		groups[slope] = np.concatenate(lines_list, axis=0)
+	return groups
+
+
+@calculate_time
+def find_barcode_by_cluster(img: np.ndarray, eps: int) -> dict:
+	"""
+	:param eps: max distance between two lines which could be divided into one group
+	:param img: image as np.ndarry
+	:return: np.ndarry(dtype=np.uint8)
+	"""
+	# Perform edge detection
+	edges = cv2.Canny(img, 80, 255)
+	
+	# instant LineSegmentDetector
+	lsd = cv2.createLineSegmentDetector()
+	
+	# Group lines by slope
+	groups = line_detect(lsd, edges)
 	
 	# Find the group with the most lines
 	group_with_most_lines = max(groups.values(), key=len)
@@ -130,9 +148,9 @@ def find_barcode_by_cluster(img, eps):
 # image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 # image_pydown = pyrdown_multithread(image_source)
 #
-# image_cut = hist_cut(image_pydown[-1], 750)
-# gamma = np.log(255) / np.log(np.max(image_cut))
-# equ = np.power(image_cut, gamma).astype(np.uint8)
+#
+# gamma = np.log(255) / np.log(np.max(image_pydown[-1]))
+# equ = np.power(image_pydown[-1], gamma).astype(np.uint8)
 #
 # clusters = find_barcode_by_cluster(equ, 100)
 # image_drawed = draw_clusters(equ, clusters)

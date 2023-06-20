@@ -29,17 +29,18 @@ def clahe_equalize(image_bgr: np.ndarray):
 	return bgr_clahe
 
 
-def filter_bright_spots(image):
+def filter_bright_spots(image, contour_area, lines_num):
 	"""
 	filter the bright spots in the image, the original image will be changed
 	:param image:
+	:param contour_area:
+	:param lines_num:
 	:return:
 	"""
 	image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	ret, image_threshold0 = cv2.threshold(image_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 	contours, hierarchy = cv2.findContours(image_threshold0, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	lsd = cv2.createLineSegmentDetector()
-	lines_list = []
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
 		if contour.shape[0] > 50:
@@ -50,7 +51,6 @@ def filter_bright_spots(image):
 			lines, width, prec, nfa = lsd.detect(image_threshold1)
 			if lines.shape[0] < 70:
 				cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
-			lines_list.append(lines)
 		else:
 			# color = get_rect_corner_ave(image, x, y, w, h)
 			cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
