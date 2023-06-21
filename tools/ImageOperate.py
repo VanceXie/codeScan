@@ -10,6 +10,34 @@ from sympy import S, diff, solveset, symbols
 from tools.DecoratorTools import calculate_time
 
 
+class ImageEqualize:
+	def __int__(self, image: np.ndarray):
+		self.image = image
+	
+	def clahe_equalize(self):
+		"""
+		:param image_bgr:ndarray of image
+		:return: bgr_clahe, image applied by clahe
+		"""
+		lab = cv2.cvtColor(self.image, cv2.COLOR_BGR2LAB)
+		# 将LAB色彩空间的L通道分离出来
+		l, a, b = cv2.split(lab)
+		# 创建CLAHE对象
+		clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(1, 4))
+		# 对L通道进行CLAHE均衡化
+		l_clahe = clahe.apply(l)
+		# 将CLAHE均衡化后的L通道合并回LAB色彩空间
+		lab_clahe = cv2.merge((l_clahe, a, b))
+		# 将LAB色彩空间转换回BGR色彩空间
+		bgr_clahe = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
+		return bgr_clahe
+	
+	def adaptive_index_equalize(self):
+		imax = np.max(self.image)
+		return (255 ** (self.image / imax)).astype(np.uint8)
+
+
+@calculate_time
 def clahe_equalize(image_bgr: np.ndarray):
 	"""
 	:param image_bgr:ndarray of image
@@ -19,7 +47,7 @@ def clahe_equalize(image_bgr: np.ndarray):
 	# 将LAB色彩空间的L通道分离出来
 	l, a, b = cv2.split(lab)
 	# 创建CLAHE对象
-	clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(3, 15))
+	clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(1, 4))
 	# 对L通道进行CLAHE均衡化
 	l_clahe = clahe.apply(l)
 	# 将CLAHE均衡化后的L通道合并回LAB色彩空间
@@ -119,7 +147,7 @@ def get_original_location(point_coordinates: np.ndarray, pyramid_order: int) -> 
 
 
 @calculate_time
-def block_threshold(image, block_size=500):
+def block_threshold(image, block_size=101):
 	# 计算图像大小
 	height, width = image.shape
 	

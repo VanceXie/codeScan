@@ -143,16 +143,16 @@ def find_barcode_by_cluster(img: np.ndarray, eps: int) -> dict:
 # 				os.makedirs(result_path)
 # 			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
 # print('finished!')
-
+#
 # file = r"D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Factory\1216121041_NG_BarCode_Camera3_1216121042.jpg"
 # image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
 # image_pydown = pyrdown_multithread(image_source)
 #
 #
-# gamma = np.log(255) / np.log(np.max(image_pydown[-1]))
-# equ = np.power(image_pydown[-1], gamma).astype(np.uint8)
-#
-# clusters = find_barcode_by_cluster(equ, 100)
+# # gamma = np.log(255) / np.log(np.max(image_pydown[-1]))
+# # equ = np.power(image_pydown[-1], gamma).astype(np.uint8)
+# equ=image_pydown[-1]
+# clusters = find_barcode_by_cluster(equ, 60)
 # image_drawed = draw_clusters(equ, clusters)
 #
 # cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
