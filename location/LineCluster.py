@@ -44,10 +44,10 @@ def cluster_lines(lines: list, eps: int) -> dict:
 	max_length = max(len(v) for v in clusters.values())
 	
 	# 根据每一行首个元素进行排序
-	[lines.sort(axis=0) for lines in clusters.values()]
+	# [lines.sort(axis=0) for lines in clusters.values()]
 	
-	dist_dic = [np.diag(compute_distance_matrix(cluster[np.argsort(cluster[:, 0])]), k=1) for cluster in clusters.values()]
-	std_list = [np.std(dist_list) for dist_list in dist_dic]
+	# dist_dic = [np.diag(compute_distance_matrix(cluster[np.argsort(cluster[:, 0])]), k=1) for cluster in clusters.values()]
+	# std_list = [np.std(dist_list) for dist_list in dist_dic]
 	
 	clusters_new = {key: value for key, value in clusters.items() if len(value) >= 0.3 * max_length}
 	return clusters_new
@@ -110,13 +110,13 @@ def find_barcode_by_cluster(img: np.ndarray, eps: int) -> dict:
 	:return: np.ndarry(dtype=np.uint8)
 	"""
 	# Perform edge detection
-	edges = cv2.Canny(img, 80, 255)
+	# edges = cv2.Canny(img, 30, 255)
 	
 	# instant LineSegmentDetector
 	lsd = cv2.createLineSegmentDetector()
 	
 	# Group lines by slope
-	groups = line_detect(lsd, edges)
+	groups = line_detect(lsd, img)
 	
 	# Find the group with the most lines
 	group_with_most_lines = max(groups.values(), key=len)

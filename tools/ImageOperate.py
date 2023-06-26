@@ -37,27 +37,7 @@ class ImageEqualize:
 		return (255 ** (self.image / imax)).astype(np.uint8)
 
 
-@calculate_time
-def clahe_equalize(image_bgr: np.ndarray):
-	"""
-	:param image_bgr:ndarray of image
-	:return: bgr_clahe, image applied by clahe
-	"""
-	lab = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2LAB)
-	# 将LAB色彩空间的L通道分离出来
-	l, a, b = cv2.split(lab)
-	# 创建CLAHE对象
-	clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(1, 4))
-	# 对L通道进行CLAHE均衡化
-	l_clahe = clahe.apply(l)
-	# 将CLAHE均衡化后的L通道合并回LAB色彩空间
-	lab_clahe = cv2.merge((l_clahe, a, b))
-	# 将LAB色彩空间转换回BGR色彩空间
-	bgr_clahe = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
-	return bgr_clahe
-
-
-def filter_bright_spots(image, contour_area, lines_num):
+def filter_bright_spots(image, contour_area, lines_num: int = 70):
 	"""
 	filter the bright spots in the image, the original image will be changed
 	:param image:
@@ -71,16 +51,15 @@ def filter_bright_spots(image, contour_area, lines_num):
 	lsd = cv2.createLineSegmentDetector()
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
-		if contour.shape[0] > 70:
+		if cv2.contourArea(contour) > contour_area:
 			image_gray_part = image_gray[y:y + h, x:x + w]
-			# image_threshold = cv2.adaptiveThreshold(image_gray_part, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 5, 0)
 			ret1, image_threshold1 = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
 			# detect lines_list
 			lines, width, prec, nfa = lsd.detect(image_threshold1)
-			if lines.shape[0] < 70:
-				cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
+			if lines is not None:
+				if lines.shape[0] < lines_num:
+					cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
 		else:
-			# color = get_rect_corner_ave(image, x, y, w, h)
 			cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
 	return image
 
@@ -108,6 +87,7 @@ def pyrdown_multithread(image_source: np.ndarray, pyr_levels: int = 2) -> list:
 	return pyramid
 
 
+@calculate_time
 def build_laplacian_pyramid(image: np.ndarray, levels: int = 3, layer: int = 2):
 	"""
 
@@ -136,15 +116,15 @@ def build_laplacian_pyramid(image: np.ndarray, levels: int = 3, layer: int = 2):
 		# Laplace Pyramid
 		laplacian_pyramid[level] = cv2.subtract(current_level, upsampled)
 		
-		current_level = downsampled
-		# The low resolution pyramid layer to fetch
+		# The low resolution pyramid layer to fetch, with edge enhance
 		if level == layer:
 			laplacian_ = laplacian_pyramid[level]
-			reconstructed = cv2.add(upsampled, laplacian_)
-	
+			enhanced = cv2.add(current_level, laplacian_)
+		
+		current_level = downsampled
 	laplacian_pyramid[levels] = current_level
 	
-	return gaussian_pyramid, laplacian_pyramid, reconstructed
+	return gaussian_pyramid, laplacian_pyramid, enhanced
 
 
 def reconstruct_from_laplacian_pyramid(laplacian_pyramid, layer):
@@ -247,7 +227,7 @@ def get_threshold_by_convexity(hist, range_min, range_max, exponent):
 	return int(solution[(solution >= 0) & (solution <= 255)][-1])
 
 
-def hist_cut(img, mutation_quantity):
+def hist_cut_by_mutation(img, mutation_quantity):
 	"""
 	:param img: 3-D ndarray
 	:param mutation_quantity: 突变量
@@ -266,7 +246,7 @@ def hist_cut(img, mutation_quantity):
 	return img
 
 
-def hist_remap(img):
+def hist_normalized(img):
 	# 统计灰度直方图
 	hist, bins = np.histogram(img.ravel(), 256, [0, 256])
 	# 计算直方图的均值和标准差
