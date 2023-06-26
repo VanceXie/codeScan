@@ -71,7 +71,7 @@ def filter_bright_spots(image, contour_area, lines_num):
 	lsd = cv2.createLineSegmentDetector()
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
-		if contour.shape[0] > 50:
+		if contour.shape[0] > 70:
 			image_gray_part = image_gray[y:y + h, x:x + w]
 			# image_threshold = cv2.adaptiveThreshold(image_gray_part, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 5, 0)
 			ret1, image_threshold1 = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
@@ -95,7 +95,7 @@ def pyrdown_multithread(image_source: np.ndarray, pyr_levels: int = 2) -> list:
 	# Initialize thread pool executor
 	executor = concurrent.futures.ThreadPoolExecutor()
 	
-	# Generate pyramid levels in parallel
+	# Generate gauss_pyramid levels in parallel
 	pyramid = [image_source]
 	for level in range(0, pyr_levels):
 		future = executor.submit(lambda img: (cv2.pyrDown(img)), pyramid[-1])
@@ -108,35 +108,64 @@ def pyrdown_multithread(image_source: np.ndarray, pyr_levels: int = 2) -> list:
 	return pyramid
 
 
-@calculate_time
-def pyrdown(image_source: np.ndarray, pyr_levels: int = 2) -> list:
+def build_laplacian_pyramid(image: np.ndarray, levels: int = 3, layer: int = 2):
 	"""
-	Downsample to get the list of graph pyramid
-	:param image_source: ndarray of image
-	:param pyr_levels: The order of the graph pyramid
-	:return: list of graph pyramid
+
+	:param image: ndarray of image
+	:param levels: Number of Pyramid Layers, down sampling times
+	:param layer: layer index of the image pyramid to get
+	:return: laplacian_pyramid including a low-resolution image of the original image
 	"""
-	if not isinstance(image_source, np.ndarray):
+	if not isinstance(image, np.ndarray):
 		raise TypeError("Input image must be a valid ndarray.")
-	if not isinstance(pyr_levels, int):
+	if not isinstance(levels, int):
 		raise TypeError("Pyramid level must be an integer.")
-	# Preallocate pyramid list
-	pyramid = [None] * (pyr_levels + 1)
-	pyramid[0] = image_source
-	# Generate pyramid
-	image = image_source
-	for level in range(1, pyr_levels + 1):
-		image = cv2.pyrDown(image)
-		pyramid[level] = image.copy()
 	
-	return pyramid
+	gaussian_pyramid = [None] * (levels + 1)
+	gaussian_pyramid[0] = image
+	
+	laplacian_pyramid = [None] * (levels + 1)
+	current_level = image
+	
+	for level in range(levels):
+		# Gaussian pyramid formed by downsampling
+		downsampled = cv2.pyrDown(current_level)
+		gaussian_pyramid[level + 1] = downsampled
+		# Gaussian pyramid formed by upsampling
+		upsampled = cv2.pyrUp(downsampled, dstsize=current_level.shape[:2][::-1])
+		# Laplace Pyramid
+		laplacian_pyramid[level] = cv2.subtract(current_level, upsampled)
+		
+		current_level = downsampled
+		# The low resolution pyramid layer to fetch
+		if level == layer:
+			laplacian_ = laplacian_pyramid[level]
+			reconstructed = cv2.add(upsampled, laplacian_)
+	
+	laplacian_pyramid[levels] = current_level
+	
+	return gaussian_pyramid, laplacian_pyramid, reconstructed
+
+
+def reconstruct_from_laplacian_pyramid(laplacian_pyramid, layer):
+	"""
+	:param laplacian_pyramid: laplacian_pyramid including a low-resolution image of the original image at the end of the list
+	:param layer: layer index of the image pyramid to get
+	:return:
+	"""
+	levels = len(laplacian_pyramid) - 1
+	reconstructed = laplacian_pyramid[levels]
+	for i in range(levels - 1, layer - 1, -1):
+		upsampled = cv2.pyrUp(reconstructed, dstsize=laplacian_pyramid[i].shape[:2][::-1])
+		reconstructed = cv2.add(upsampled, laplacian_pyramid[i])
+	return reconstructed
 
 
 def get_original_location(point_coordinates: np.ndarray, pyramid_order: int) -> np.ndarray:
 	"""
 	Get the position of the point on the original image from the downsampled image
 	:param point_coordinates: coordinates of points on downsampled image, np.ndarray
-	:param pyramid_order: The order of the graph pyramid, non-negative integer
+	:param pyramid_order: The order of the graph gauss_pyramid, non-negative integer
 	:return: coordinates of points on original image, np.ndarray
 	"""
 	if not isinstance(pyramid_order, int) or pyramid_order < 0:
@@ -275,3 +304,24 @@ def get_rect_corner_ave(image, x, y, w, h):
 	# 转为元素数据类型为int的list
 	average_pixel_value = avg_pixel_value.astype(int).tolist()
 	return average_pixel_value
+
+
+def contour_filter(image_gray: np.ndarray, lsd: cv2.LineSegmentDetector, contours, area_threshold: int, lines_num_threshold: int):
+	contour_list = []
+	for contour in contours:
+		x, y, w, h = cv2.boundingRect(contour)
+		if cv2.contourArea(contour) > area_threshold:
+			
+			image_gray_part = image_gray[y:y + h, x:x + w]
+			
+			ret2, image_threshold = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
+			# detect lines_list
+			lines, width, prec, nfa = lsd.detect(image_threshold)
+			if lines is not None:
+				if lines.shape[0] < lines_num_threshold:
+					cv2.drawContours(image_gray, [contour], -1, 0, cv2.FILLED)
+				else:
+					contour_list.append(contour_list)
+		else:
+			cv2.drawContours(image_gray, [contour], -1, 0, cv2.FILLED)
+	return contour_list
