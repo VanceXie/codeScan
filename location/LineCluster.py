@@ -15,6 +15,7 @@ def compute_distance_matrix(lines: list) -> np.ndarray:
 	:return: distance matrix, a symmetric matrix whose diagonal elements are 0
 	"""
 	lines = np.array(lines).reshape((-1, 4))  # 把含有m个元素（每个元素是(1×4)的ndarray）的线段list转化为m×4的ndarray，每一行代表每个线段的端点坐标(x0,y0,x1,y1)
+
 	dist_triple = pdist(lines)  # 计算n维向量数组的成对距离的函数。输出结果会压缩成一个一维距离向量，只包含输入矩阵的下三角部分（省略了对角线上的元素）
 	dist = squareform(dist_triple)  # 将pdist函数产生的压缩距离向量转换为距离矩阵。其输入是一个N*(N-1)/2维的压缩距离向量，输出是一个N*N维的距离矩阵
 	return dist
@@ -110,13 +111,13 @@ def find_barcode_by_cluster(img: np.ndarray, eps: int) -> dict:
 	:return: np.ndarry(dtype=np.uint8)
 	"""
 	# Perform edge detection
-	# edges = cv2.Canny(img, 30, 255)
+	edges = cv2.Canny(img, 200, 255)
 	
 	# instant LineSegmentDetector
 	lsd = cv2.createLineSegmentDetector()
 	
 	# Group lines by slope
-	groups = line_detect(lsd, img)
+	groups = line_detect(lsd, edges)
 	
 	# Find the group with the most lines
 	group_with_most_lines = max(groups.values(), key=len)
@@ -143,19 +144,3 @@ def find_barcode_by_cluster(img: np.ndarray, eps: int) -> dict:
 # 				os.makedirs(result_path)
 # 			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
 # print('finished!')
-#
-# file = r"D:\Fenkx\Fenkx - General\AI\Dataset\BarCode\My Datasets\Factory\1216121041_NG_BarCode_Camera3_1216121042.jpg"
-# image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# image_pydown = pyrdown_multithread(image_source)
-#
-#
-# # gamma = np.log(255) / np.log(np.max(image_pydown[-1]))
-# # equ = np.power(image_pydown[-1], gamma).astype(np.uint8)
-# equ=image_pydown[-1]
-# clusters = find_barcode_by_cluster(equ, 60)
-# image_drawed = draw_clusters(equ, clusters)
-#
-# cv2.namedWindow('result', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
-# cv2.imshow('result', image_drawed)
-# if cv2.waitKey(0) == 27:
-# 	cv2.destroyAllWindows()
