@@ -88,7 +88,7 @@ def pyrdown_multithread(image_source: np.ndarray, pyr_levels: int = 2) -> list:
 
 
 @calculate_time
-def build_laplacian_pyramid(image: np.ndarray, levels: int = 3, layer: int = 2):
+def build_pyramid(image: np.ndarray, levels: int = 3, layer: int = 2):
 	"""
 
 	:param image: ndarray of image
