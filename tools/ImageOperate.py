@@ -11,14 +11,11 @@ from tools.DecoratorTools import calculate_time
 
 
 class ImageEqualize:
-	def __int__(self, image: np.ndarray):
+	def __init__(self, image):
 		self.image = image
 	
+	@calculate_time
 	def clahe_equalize(self):
-		"""
-		:param image_bgr:ndarray of image
-		:return: bgr_clahe, image applied by clahe
-		"""
 		lab = cv2.cvtColor(self.image, cv2.COLOR_BGR2LAB)
 		# 将LAB色彩空间的L通道分离出来
 		l, a, b = cv2.split(lab)
@@ -29,39 +26,69 @@ class ImageEqualize:
 		# 将CLAHE均衡化后的L通道合并回LAB色彩空间
 		lab_clahe = cv2.merge((l_clahe, a, b))
 		# 将LAB色彩空间转换回BGR色彩空间
-		bgr_clahe = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
-		return bgr_clahe
+		self.image = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
+		return self
 	
+	@calculate_time
 	def adaptive_index_equalize(self):
 		imax = np.max(self.image)
-		return (255 ** (self.image / imax)).astype(np.uint8)
+		self.image = (255 ** (self.image / imax)).astype(np.uint8)
+		return self
 
 
-def filter_bright_spots(image, contour_area, lines_num: int = 70):
+class Sharpen:
+	def __init__(self, image):
+		self.image = image
+	
+	@calculate_time
+	def mask_sharpen(self, kernel_size: tuple = (5, 5)):
+		blurred = cv2.GaussianBlur(self.image, kernel_size, 0, cv2.CV_32F)
+		res = self.image.astype(np.float32) - blurred
+		
+		# 增强后的图像
+		image_add = self.image + res
+		self.image = np.clip(image_add, 0, 255).astype(np.uint8)
+		return self
+	
+	def frequency_enhancement(self):
+		pass
+
+
+@calculate_time
+def filter_bright_spots(image_gray, lsd: cv2.LineSegmentDetector, lines_num: int = 70):
 	"""
 	filter the bright spots in the image, the original image will be changed
-	:param image:
-	:param contour_area:
+	:param image_gray:
+	:param lsd:
 	:param lines_num:
 	:return:
 	"""
-	image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	ret, image_threshold0 = cv2.threshold(image_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-	contours, hierarchy = cv2.findContours(image_threshold0, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-	lsd = cv2.createLineSegmentDetector()
+	# 阈值分割
+	r, t = cv2.threshold(image_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+	# 开闭运算
+	kernel = np.ones((3, 3), np.uint8)
+	closing = cv2.morphologyEx(t, cv2.MORPH_CLOSE, kernel)  # 闭运算
+	# opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, kernel)  # 开运算
+	# 面积阈值
+	area_threshold = int(image_gray.shape[0] * image_gray.shape[1] * 0.015)
+	# 寻找轮廓
+	contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	contour_list = []
 	for contour in contours:
 		x, y, w, h = cv2.boundingRect(contour)
-		if cv2.contourArea(contour) > contour_area:
+		if cv2.contourArea(contour) > area_threshold:
 			image_gray_part = image_gray[y:y + h, x:x + w]
-			ret1, image_threshold1 = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
-			# detect lines_list
-			lines, width, prec, nfa = lsd.detect(image_threshold1)
+			ret, image_threshold = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
+			# detect lines
+			lines, width, prec, nfa = lsd.detect(image_threshold)
 			if lines is not None:
 				if lines.shape[0] < lines_num:
-					cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
+					cv2.drawContours(image_gray, [contour], -1, 0, cv2.FILLED)
+				else:
+					contour_list.append(contour)
 		else:
-			cv2.drawContours(image, [contour], -1, 0, cv2.FILLED)
-	return image
+			cv2.drawContours(image_gray, [contour], -1, 0, cv2.FILLED)
+	return contour_list
 
 
 @calculate_time
@@ -139,6 +166,22 @@ def reconstruct_from_laplacian_pyramid(laplacian_pyramid, layer):
 		upsampled = cv2.pyrUp(reconstructed, dstsize=laplacian_pyramid[i].shape[:2][::-1])
 		reconstructed = cv2.add(upsampled, laplacian_pyramid[i])
 	return reconstructed
+
+
+@calculate_time
+def downsample_with_edge_preservation(image: np.ndarray, scale_factor: int = 3):
+	"""
+	:param image:
+	:param scale_factor: scaling ratio, 1/scale_factor
+	:return: downsampled_image
+	"""
+	# 创建 gaussian 卷积核
+	sigma = 0.1
+	size = int(2 * np.ceil(3 * sigma) + 1)
+	kernel_gaussian = cv2.getGaussianKernel(size, sigma)
+	# 使用卷积核进行下采样
+	smoothed_image = cv2.sepFilter2D(image, -1, kernel_gaussian.T, kernel_gaussian)
+	return smoothed_image[::scale_factor, ::scale_factor]
 
 
 def get_original_location(point_coordinates: np.ndarray, pyramid_order: int) -> np.ndarray:

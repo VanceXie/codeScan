@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import clahe_equalize
 
 
 @calculate_time

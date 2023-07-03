@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from tools.DecoratorTools import calculate_time
-from tools.ImageOperate import clahe_equalize
+from tools.ImageOperate import ImageEqualize
 
 
 def compute_overlap(x1, y1, w1, h1, x2, y2, w2, h2):
@@ -104,7 +104,7 @@ target_img = np.zeros(source_img.shape, np.uint8)
 cv2.copyTo(source_img, mask=None, dst=target_img)
 
 template_img = cv2.imread(r"C:\Users\fy.xie\Desktop\template.png", 0)
-target_img = clahe_equalize(target_img)
+target_img = ImageEqualize(target_img).clahe_equalize()
 img_gray = cv2.cvtColor(target_img, cv2.COLOR_BGR2GRAY)
 # block_image = block_threshold(img_gray)
 img = template_match_multi(source_img, img_gray, template_img, 180, 0.7, 1.3, 0.2, 1.0, 0.3)

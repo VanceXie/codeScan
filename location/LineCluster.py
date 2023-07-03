@@ -123,24 +123,3 @@ def find_barcode_by_cluster(img: np.ndarray, eps: int) -> dict:
 	group_with_most_lines = max(groups.values(), key=len)
 	clusters = cluster_lines(group_with_most_lines, eps=eps)
 	return clusters
-
-# # Load the image
-# path = r'D:\Fenkx\Fenkx - General\Ubei\Test_Label1'
-# for index, item in enumerate(os.listdir(path)):
-# 	file = os.path.join(path, item)
-# 	if os.path.isfile(file):
-# 		image_source = cv2.imdecode(np.fromfile(file, dtype=np.uint8), 1)
-# 		# removed_img = hist_cut(image_source)
-# 		# remapped_img = hist_remap(removed_img)
-# 		image_equalized = clahe_equalize(image_source)
-# 		try:
-# 			clusters = find_barcode_by_cluster(image_equalized)
-# 			image_drawed = draw_clusters(image_source, clusters)
-# 		finally:
-# 			filename = os.path.splitext(item)
-# 			new_name = filename[0] + filename[-1]
-# 			result_path = os.path.join(path, 'result_LineCluster')
-# 			if not os.path.exists(result_path):
-# 				os.makedirs(result_path)
-# 			cv2.imwrite(os.path.join(result_path, new_name), image_drawed)
-# print('finished!')
