@@ -15,6 +15,8 @@ y3 = np.power(255, x3 / 153)
 y4 = np.power(255, x4 / 204)
 y5 = np.power(255, x5 / 255)
 
+# 设置图像的像素尺寸
+fig = plt.figure(figsize=(20, 16), dpi=300)  # 宽度为8英寸，高度为6英寸
 # 绘制图像
 plt.plot(x1, y1, label='51')
 plt.plot(x2, y2, label='102')
@@ -23,13 +25,21 @@ plt.plot(x4, y4, label='204')
 plt.plot(x5, y5, label='255')
 
 # 设置图例和标题
-legend = plt.legend(loc='lower right')
+legend = plt.legend(loc='lower right', fontsize='16')
 legend.set_title('I_max')
-plt.title('I_equ=[(255)^(I/I_max)]')
+legend.get_title().set_fontsize('16')  # 设置图例标题字号为14
+
+plt.title('I_equ=[(255)^(I/I_max)]\n', fontsize=30)
+
 plt.xlim([0, 255])
 plt.ylim([0, 255])
 # 添加纵向网格线
 for i in range(51, 256, 51):
 	plt.axvline(x=i, color='red', linestyle='--', linewidth=1)
+
+# # 调整标题和图像的间距
+# plt.subplots_adjust(top=0.5)  # 通过调整top参数的值来设置间距
 # 显示图像
+plt.savefig(r"D:\Fenwick\Pictures\Paper\Figure_1.png", bbox_inches='tight', pad_inches=0.5)
+
 plt.show()
