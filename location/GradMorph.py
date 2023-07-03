@@ -20,14 +20,6 @@ def find_barcode_by_diff(img):
 	diff_gradient = cv2.convertScaleAbs(diff_gradient)
 	# diff = np.where(diff > 0, diff, 0)
 	
-	# # 掩码索引的方法,更节省内存,稍微慢一些
-	# threshold = np.percentile(arr, 80)  # 获取前20%的最大数
-	# mask = arr > threshold
-	# arr[~mask] = 0
-	# np.where方法通常比使用掩码索引的方法更快,占用更多的内存
-	# # threshold = np.percentile(diff, 93)  # 获取前20%的最大数
-	# diff_sift = np.where(diff >= threshold, diff, 0)
-	
 	# 归一化到0至255作为像素值
 	norm_diff_gradient = cv2.normalize(diff_gradient, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
 	

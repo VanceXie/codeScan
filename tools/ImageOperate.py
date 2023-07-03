@@ -29,7 +29,6 @@ class ImageEqualize:
 		self.image = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
 		return self
 	
-	@calculate_time
 	def adaptive_index_equalize(self):
 		imax = np.max(self.image)
 		self.image = (255 ** (self.image / imax)).astype(np.uint8)
@@ -40,7 +39,6 @@ class Sharpen:
 	def __init__(self, image):
 		self.image = image
 	
-	@calculate_time
 	def mask_sharpen(self, kernel_size: tuple = (5, 5)):
 		blurred = cv2.GaussianBlur(self.image, kernel_size, 0, cv2.CV_32F)
 		res = self.image.astype(np.float32) - blurred
@@ -54,7 +52,6 @@ class Sharpen:
 		pass
 
 
-@calculate_time
 def filter_bright_spots(image_gray, lsd: cv2.LineSegmentDetector, lines_num: int = 70):
 	"""
 	filter the bright spots in the image, the original image will be changed
@@ -66,29 +63,46 @@ def filter_bright_spots(image_gray, lsd: cv2.LineSegmentDetector, lines_num: int
 	# 阈值分割
 	r, t = cv2.threshold(image_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 	# 开闭运算
-	kernel = np.ones((3, 3), np.uint8)
-	closing = cv2.morphologyEx(t, cv2.MORPH_CLOSE, kernel)  # 闭运算
+	# kernel = np.ones((3, 3), np.uint8)
+	# closing = cv2.morphologyEx(t, cv2.MORPH_CLOSE, kernel)  # 闭运算
 	# opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, kernel)  # 开运算
 	# 面积阈值
 	area_threshold = int(image_gray.shape[0] * image_gray.shape[1] * 0.015)
 	# 寻找轮廓
-	contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-	contour_list = []
-	for contour in contours:
-		x, y, w, h = cv2.boundingRect(contour)
-		if cv2.contourArea(contour) > area_threshold:
+	contours, hierarchy = cv2.findContours(t, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	lines_list = []
+	contour_list_area = []
+	contour_list_line = []
+	for contour_area in contours:
+		x, y, w, h = cv2.boundingRect(contour_area)
+		if cv2.contourArea(contour_area) > area_threshold:
 			image_gray_part = image_gray[y:y + h, x:x + w]
 			ret, image_threshold = cv2.threshold(image_gray_part, 0, 255, cv2.THRESH_OTSU + cv2.THRESH_BINARY)
 			# detect lines
 			lines, width, prec, nfa = lsd.detect(image_threshold)
 			if lines is not None:
-				if lines.shape[0] < lines_num:
-					cv2.drawContours(image_gray, [contour], -1, 0, cv2.FILLED)
-				else:
-					contour_list.append(contour)
+				lines_list.append(lines)
+				contour_list_area.append(contour_area)
+		# if lines.shape[0] < lines_num:
+		# 	cv2.drawContours(image_gray, [contour_area], -1, 0, cv2.FILLED)
+		# else:
+		# 	contour_list_area.append(contour_area)
 		else:
-			cv2.drawContours(image_gray, [contour], -1, 0, cv2.FILLED)
-	return contour_list
+			cv2.drawContours(image_gray, [contour_area], -1, 0, cv2.FILLED)
+	
+	# 将列表中的ndarray转换为NumPy数组
+	arr_list_np = np.array(lines_list, dtype=object)
+	try:
+		# 获取最长的ndarray元素的数量
+		longest_length = np.max([len(arr) for arr in arr_list_np])
+		for contour_line, lines in zip(contour_list_area, lines_list):
+			if len(lines) >= max((lines_num, 0.6 * longest_length)):
+				contour_list_line.append(contour_line)
+			else:
+				cv2.drawContours(image_gray, [contour_line], -1, 0, cv2.FILLED)
+	except:
+		print(arr_list_np)
+	return contour_list_line
 
 
 @calculate_time
@@ -168,7 +182,6 @@ def reconstruct_from_laplacian_pyramid(laplacian_pyramid, layer):
 	return reconstructed
 
 
-@calculate_time
 def downsample_with_edge_preservation(image: np.ndarray, scale_factor: int = 3):
 	"""
 	:param image:
