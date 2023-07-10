@@ -20,6 +20,7 @@ def locate(image_source):
 	_ = filter_bright_spots(image_gray, lsd)
 	
 	# 重映射
+	image_gray = cv2.medianBlur(image_gray, 3)
 	image_gray = ImageEqualize(image_gray).adaptive_index_equalize().image
 	
 	contour_list = filter_bright_spots(image_gray, lsd)
